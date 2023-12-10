@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Notification;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,13 +24,13 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dash',function (){
+Route::get('/dash', function () {
     return Inertia::render('');
 });
 
@@ -39,6 +40,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';
+
+Route::prefix('notifications')->group(function () {
+    Route::get('/', [Notification::class, 'index']);
+    Route::post('/', [Notification::class, 'store']);
+    Route::delete('/{plan}', [Notification::class, 'destroy']);
+    Route::get('/{plan}', [Notification::class, 'show']);
+    Route::put('/{plan}', [Notification::class, 'update']);
+
+});
+
+require __DIR__ . '/auth.php';
+require __DIR__ . '/admin.php';
 

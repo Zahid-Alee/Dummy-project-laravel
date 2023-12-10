@@ -28,6 +28,11 @@ const navConfig = [
     icon: icon('ic_blog'),
   },
   {
+    title: 'Logout',
+    path: 'http://127.0.0.1:8000/logout',
+    icon: icon('ic_lock'),
+  },
+  {
     title: 'login',
     path: '/login',
     icon: icon('ic_lock'),

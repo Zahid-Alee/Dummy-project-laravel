@@ -5,7 +5,7 @@ import Dropdown from './Dropdown';
 const Navbar = ({auth}) => {
     return (
 
-        <nav
+        <nav style={{background:"maroon"}}
             class="flex-no-wrap relative flex w-full items-center justify-between  py-2 shadow-md shadow-black/5 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4">
             <div class="flex w-full flex-wrap items-center justify-between px-3">
                 <button
@@ -103,7 +103,7 @@ const Navbar = ({auth}) => {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                        <Dropdown.Link href={route('logout')} method="post" as="button">
+                                        <Dropdown.Link href={route('logout')} method="get" as="button">
                                             Log Out
                                         </Dropdown.Link>
                                     </Dropdown.Content>

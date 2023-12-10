@@ -11,6 +11,7 @@ module.exports = withMT({
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.jsx',
+        'node_modules/flowbite-react/lib/esm/**/*.js',
     ],
 
     theme: {
@@ -21,5 +22,8 @@ module.exports = withMT({
         },
     },
 
-    plugins: [forms],
+    plugins: [
+        forms,
+        require('flowbite/plugin')
+    ],
 });

@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -31,24 +32,32 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
+    
         $request->session()->regenerate();
-
-        // return redirect()->intended(RouteServiceProvider::HOME);
-        return redirect('/admin/dash');
+    
+        if ($request->user()->role === 'admin') {
+            return redirect('/admin/dash');
+        }
+    
+        return redirect(RouteServiceProvider::HOME);
     }
+    
 
     /**
      * Destroy an authenticated session.
      */
     public function destroy(Request $request): RedirectResponse
-    {
-        Auth::guard('web')->logout();
+{
+    $role = $request->user()->role ?? null;
 
-        $request->session()->invalidate();
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        $request->session()->regenerateToken();
-
-        return redirect('/');
+    if ($role === 'admin') {
+        return Redirect::to('/admin/dash/login');
     }
+
+    return redirect('/');
+}
 }

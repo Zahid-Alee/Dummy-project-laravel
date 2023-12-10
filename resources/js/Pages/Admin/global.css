@@ -1,2 +1,16 @@
 /* scrollbar */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
 @import 'simplebar-react/dist/simplebar.min.css';
+
+
+.grid-plans-container{
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    grid-gap: 20px;
+}

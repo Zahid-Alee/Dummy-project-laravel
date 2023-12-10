@@ -4,20 +4,52 @@ import TopBar from '../Components/TopBar';
 import { Link, Head } from '@inertiajs/react';
 import { Carousel, IconButton } from "@material-tailwind/react";
 import '../../css/app.css'
+// import Modal from '@/Components/Modal';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { BlogView } from './Admin/sections/blog/view';
+import UsersBlogView from './Admin/sections/blog/view/user-blog-view';
+import UserPage from './Admin/pages/user';
+import UserBlogView from './Admin/sections/blog/view/user-blog-view';
 // import AuthenticatedLayout from '@/User/Layouts/AuthenticatedLayout';
 
 // import '../../img/'
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const [selectedPlan, setSelectedPlan] = React.useState(null);
+    const handleBookPlan = (plan) => {
+        handleOpen();
+        setSelectedPlan(plan.id);
+    }
     return (
         <>
             <Head title="Welcome" />
-            <div  className="">
+            <div className="">
                 <>
                     <TopBar />
                     <div class="nav-bar">
                         <div class="container">
-                            <Navbar auth={auth}/>
+                            <Navbar auth={auth} />
                         </div>
                     </div>
                     <div className="carousel-container">
@@ -249,76 +281,28 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 <p>Washing Plan</p>
                                 <h2>Choose Your Plan</h2>
                             </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="price-item">
-                                        <div class="price-header">
-                                            <h3>Basic Cleaning</h3>
-                                            <h2><span>Rs</span><strong>1000</strong><span>.00</span></h2>
-                                        </div>
-                                        <div class="price-body">
-                                            <ul>
-                                                <li><i class="far fa-check-circle"></i>Seats Washing</li>
-                                                <li><i class="far fa-check-circle"></i>Vacuum Cleaning</li>
-                                                <li><i class="far fa-check-circle"></i>Exterior Cleaning</li>
-                                                <li><i class="far fa-times-circle"></i>Interior Wet Cleaning</li>
-                                                <li><i class="far fa-times-circle"></i>Window Wiping</li>
-                                            </ul>
-                                        </div>
-                                        <div class="price-footer">
-                                            <a class="btn btn-custom" href="">Book Now</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="price-item featured-item">
-                                        <div class="price-header">
-                                            <h3>Premium Cleaning</h3>
-                                            <h2><span>Rs</span><strong>1500</strong><span>.00</span></h2>
-                                        </div>
-                                        <div class="price-body">
-                                            <ul>
-                                                <li><i class="far fa-check-circle"></i>Seats Washing</li>
-                                                <li><i class="far fa-check-circle"></i>Vacuum Cleaning</li>
-                                                <li><i class="far fa-check-circle"></i>Exterior Cleaning</li>
-                                                <li><i class="far fa-check-circle"></i>Interior Wet Cleaning</li>
-                                                <li><i class="far fa-times-circle"></i>Window Wiping</li>
-                                            </ul>
-                                        </div>
-                                        <div class="price-footer">
-                                            <a class="btn btn-custom" href="">Book Now</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="price-item">
-                                        <div class="price-header">
-                                            <h3>Complex Cleaning</h3>
-                                            <h2><span>RS</span><strong>2000</strong><span>.00</span></h2>
-                                        </div>
-                                        <div class="price-body">
-                                            <ul>
-                                                <li><i class="far fa-check-circle"></i>Seats Washing</li>
-                                                <li><i class="far fa-check-circle"></i>Vacuum Cleaning</li>
-                                                <li><i class="far fa-check-circle"></i>Exterior Cleaning</li>
-                                                <li><i class="far fa-check-circle"></i>Interior Wet Cleaning</li>
-                                                <li><i class="far fa-check-circle"></i>Window Wiping</li>
-                                            </ul>
-                                        </div>
-                                        <div class="price-footer">
-                                            <a class="btn btn-custom" href="">Book Now</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <UserBlogView view={true} />
                         </div>
                     </div>
 
-
-
+                    <div>
+                        <Modal
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={style}>
+                                <Typography id="modal-modal-title" variant="h6" component="h2">
+                                    Text in a modal
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                    Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                                </Typography>
+                            </Box>
+                        </Modal>
+                    </div>
                     <Testimonial />
-
-
                 </>
             </div>
 

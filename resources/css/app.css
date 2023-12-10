@@ -193,7 +193,7 @@ a:focus {
 nav,
 .nav-bar {
 
-    background-color: maroon;
+    /* background-color: maroon; */
     position: sticky;
     top: 0px;
     z-index: 100;

@@ -1,208 +1,86 @@
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, Chip } from '@mui/material';
+import { AiFillCheckCircle, AiOutlineCheckCircle } from 'react-icons/ai';
+import BasicModal from '@/Components/BasicModal';
+import axios from 'axios';
 
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
-import { alpha } from '@mui/material/styles';
-import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
+const PackageCard = ({ plan, features, view }) => {
 
-import { fDate } from '../../utils/format-time';
-import { fShortenNumber } from '../../utils/format-number';
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState(null);
+  const isFeatureIncluded = (featureId) => {
 
-import Iconify from '../../components/iconify';
-import SvgColor from '../../components/svg-color';
+    return plan.features.some(feature => feature.id === featureId);
 
-// ----------------------------------------------------------------------
+  };
 
-export default function PostCard({ post, index }) {
-  const { cover, title, view, comment, share, author, createdAt } = post;
 
-  const latestPostLarge = index === 0;
+  const formatCreatedAtDate = (createdAt) => {
+    const date = new Date(createdAt);
+    const formattedDate = date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    return formattedDate;
+  };
 
-  const latestPost = index === 1 || index === 2;
 
-  const renderAvatar = (
-    <Avatar
-      alt={author.name}
-      src={author.avatarUrl}
-      sx={{
-        zIndex: 9,
-        width: 32,
-        height: 32,
-        position: 'absolute',
-        left: (theme) => theme.spacing(3),
-        bottom: (theme) => theme.spacing(-2),
-        ...((latestPostLarge || latestPost) && {
-          zIndex: 9,
-          top: 24,
-          left: 24,
-          width: 40,
-          height: 40,
-        }),
-      }}
-    />
-  );
 
-  const renderTitle = (
-    <Link
-      color="inherit"
-      variant="subtitle2"
-      underline="hover"
-      sx={{
-        height: 44,
-        overflow: 'hidden',
-        WebkitLineClamp: 2,
-        display: '-webkit-box',
-        WebkitBoxOrient: 'vertical',
-        ...(latestPostLarge && { typography: 'h5', height: 60 }),
-        ...((latestPostLarge || latestPost) && {
-          color: 'common.white',
-        }),
-      }}
-    >
-      {title}
-    </Link>
-  );
+  const hanldeBookNow = async () => {
+    // setOpen(true);
+    // setId(id);
+    await axios.post(`/subscribe/${plan.id}`).then((res) => {
+      console.log(res.data);
 
-  const renderInfo = (
-    <Stack
-      direction="row"
-      flexWrap="wrap"
-      spacing={1.5}
-      justifyContent="flex-end"
-      sx={{
-        mt: 3,
-        color: 'text.disabled',
-      }}
-    >
-      {[
-        { number: comment, icon: 'eva:message-circle-fill' },
-        { number: view, icon: 'eva:eye-fill' },
-        { number: share, icon: 'eva:share-fill' },
-      ].map((info, _index) => (
-        <Stack
-          key={_index}
-          direction="row"
-          sx={{
-            ...((latestPostLarge || latestPost) && {
-              opacity: 0.48,
-              color: 'common.white',
-            }),
-          }}
-        >
-          <Iconify width={16} icon={info.icon} sx={{ mr: 0.5 }} />
-          <Typography variant="caption">{fShortenNumber(info.number)}</Typography>
-        </Stack>
-      ))}
-    </Stack>
-  );
+    })
+      .catch((e) => {
+        console.log(e)
+      })
+  }
 
-  const renderCover = (
-    <Box
-      component="img"
-      alt={title}
-      src={cover}
-      sx={{
-        top: 0,
-        width: 1,
-        height: 1,
-        objectFit: 'cover',
-        position: 'absolute',
-      }}
-    />
-  );
+  return (<>
+    <Card className='max-w-sm' style={{padding:'20px',minWidth:"300px"}}>
+      <h5 className="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">{plan.title}</h5>
+      <div className="flex items-baseline text-gray-900 dark:text-white">
+        <span className="text-3xl font-semibold">$</span>
+        <span className="text-5xl font-extrabold tracking-tight">{plan.price}</span>
+        <span className="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400">/Wash</span>
+      </div>
+      <ul className="my-7 space-y-5">
+        {features?.map((feature, i) => (
+          <li className={`flex space-x-3 ${!isFeatureIncluded(feature.id) && 'line-through decoration-gray-500'}`} key={i}>
+            <svg
+              className={`h-5 w-5 shrink-0  ${isFeatureIncluded(feature.id) ? ' text-cyan-600 dark:text-cyan-500' : 'text-gray-400 dark:text-gray-500'} `}
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span className="text-base font-normal leading-tight text-gray-500 dark:text-gray-400">
+              {feature.name}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <button onClick={hanldeBookNow}
+        type="button"
+        className="inline-flex w-full justify-center rounded-lg bg-cyan-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-cyan-700 focus:outline-none focus:ring-4 focus:ring-cyan-200 dark:focus:ring-cyan-900"
+      >
+        Choose plan
+      </button>
+    </Card>
+  
+    <BasicModal open={open} close={() => { setOpen(false) }} >
 
-  const renderDate = (
-    <Typography
-      variant="caption"
-      component="div"
-      sx={{
-        mb: 2,
-        color: 'text.disabled',
-        ...((latestPostLarge || latestPost) && {
-          opacity: 0.48,
-          color: 'common.white',
-        }),
-      }}
-    >
-      {fDate(createdAt)}
-    </Typography>
-  );
-
-  const renderShape = (
-    <SvgColor
-      color="paper"
-      src="/assets/icons/shape-avatar.svg"
-      sx={{
-        width: 80,
-        height: 36,
-        zIndex: 9,
-        bottom: -15,
-        position: 'absolute',
-        color: 'background.paper',
-        ...((latestPostLarge || latestPost) && { display: 'none' }),
-      }}
-    />
-  );
-
-  return (
-    <Grid xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
-      <Card>
-        <Box
-          sx={{
-            position: 'relative',
-            pt: 'calc(100% * 3 / 4)',
-            ...((latestPostLarge || latestPost) && {
-              pt: 'calc(100% * 4 / 3)',
-              '&:after': {
-                top: 0,
-                content: "''",
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
-              },
-            }),
-            ...(latestPostLarge && {
-              pt: {
-                xs: 'calc(100% * 4 / 3)',
-                sm: 'calc(100% * 3 / 4.66)',
-              },
-            }),
-          }}
-        >
-          {renderShape}
-
-          {renderAvatar}
-
-          {renderCover}
-        </Box>
-
-        <Box
-          sx={{
-            p: (theme) => theme.spacing(4, 3, 3, 3),
-            ...((latestPostLarge || latestPost) && {
-              width: 1,
-              bottom: 0,
-              position: 'absolute',
-            }),
-          }}
-        >
-          {renderDate}
-
-          {renderTitle}
-
-          {renderInfo}
-        </Box>
-      </Card>
-    </Grid>
-  );
-}
-
-PostCard.propTypes = {
-  post: PropTypes.object.isRequired,
-  index: PropTypes.number,
+    </BasicModal>
+  </>
+  )
 };
+
+export default PackageCard;

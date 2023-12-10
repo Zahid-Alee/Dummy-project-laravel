@@ -1,78 +1,44 @@
-import { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
+import DataTable from 'react-data-table-component';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { users } from '../../../_mock/user';
-
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
-
-import TableNoData from '../table-no-data';
-import UserTableRow from '../user-table-row';
-import UserTableHead from '../user-table-head';
-import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
+import { applyFilter, getComparator } from '../utils';
+import { getUsersList } from '@/Pages/Admin/_mock/user';
 
-// ----------------------------------------------------------------------
-
-export default function UserPage() {
+const UserPage = () => {
+  const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleSort = (event, id) => {
-    const isAsc = orderBy === id && order === 'asc';
-    if (id !== '') {
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(id);
-    }
+  useEffect(() => {
+    getUsersList()
+      .then((data) => {
+        setUsers(data);
+      })
+      .catch((message) => {
+        console.log(message);
+      });
+  }, []);
+
+  const handleSort = (column) => {
+    const isAsc = orderBy === column && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(column);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (newPage) => {
     setPage(newPage);
   };
 
@@ -86,19 +52,51 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const dataFiltered = applyFilter({
+  const filteredUsers = applyFilter({
     inputData: users,
     comparator: getComparator(order, orderBy),
     filterName,
   });
 
-  const notFound = !dataFiltered.length && !!filterName;
+  const columns = [
+    { name: 'Name', selector: 'name', sortable: true },
+    { name: 'Email', selector: 'email', sortable: true },
+    { name: 'Role', selector: 'role', sortable: true },
+    { name: 'Registered on', selector: 'created', sortable: true },
+    { name: 'Status', selector: 'status', sortable: true },
+    {
+      name: 'Actions',
+      cell: (row) => (
+        <strong>
+          {/* <Button variant="contained" color="primary" onClick={() => handleEdit(row)}>
+            Edit
+          </Button>
+          <Button variant="contained" color="secondary" onClick={() => handleDelete(row.id)}>
+            Delete
+          </Button> */}
+          Viewable only
+        </strong>
+      ),
+      allowOverflow: true,
+      button: true,
+    },
+  ];
+
+  const handleEdit = (row) => {
+    // Handle edit action
+    console.log('Edit action for row:', row);
+  };
+
+  const handleDelete = (id) => {
+    // Handle delete action
+    console.log('Delete action for id:', id);
+    // Implement logic for deletion
+  };
 
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
-
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New User
         </Button>
@@ -106,55 +104,24 @@ export default function UserPage() {
 
       <Card>
         <UserTableToolbar
-          numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
         />
 
         <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={users.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                    />
-                  ))}
-
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
-                />
-
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
-            </Table>
+          <TableContainer>
+            <DataTable
+              columns={columns}
+              data={filteredUsers}
+              pagination
+              paginationPerPage={rowsPerPage}
+              paginationTotalRows={filteredUsers.length}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+              sortServer
+              sortIcon={<Iconify icon="eva:arrow-ios-upward-outline" />}
+              onSort={(column) => handleSort(column.selector)}
+            />
           </TableContainer>
         </Scrollbar>
 
@@ -170,4 +137,6 @@ export default function UserPage() {
       </Card>
     </Container>
   );
-}
+};
+
+export default UserPage;
