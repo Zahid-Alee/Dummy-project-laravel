@@ -26,7 +26,7 @@ import { usePathname } from '../../routes/hooks';
 
 // ----------------------------------------------------------------------
 
-export default function Nav({ openNav, onCloseNav }) {
+export default function Nav({ openNav, onCloseNav, role = 'admin' }) {
   const pathname = usePathname();
 
   const upLg = useResponsive('up', 'lg');
@@ -51,23 +51,26 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      {/* <Avatar src={account.photoURL} alt="photoURL" /> */}
 
-      <Box sx={{ ml: 2 }}>
+      {/* <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">{account.displayName}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
         </Typography>
-      </Box>
+      </Box> */}
     </Box>
   );
 
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-      {navConfig.map((item) => (
-        <NavItem key={item.title} item={item} />
-      ))}
+      {navConfig.map((item) => {
+        
+        return item?.role?.includes(role) && <NavItem key={item.title} item={item} role={role} />
+
+      }
+      )}
     </Stack>
   );
 
@@ -79,23 +82,6 @@ export default function Nav({ openNav, onCloseNav }) {
           src="/assets/illustrations/illustration_avatar.png"
           sx={{ width: 100, position: 'absolute', top: -50 }}
         />
-
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6">Get more?</Typography>
-
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-            From only $69
-          </Typography>
-        </Box>
-
-        <Button
-          href="https://material-ui.com/store/items/minimal-dashboard/"
-          target="_blank"
-          variant="contained"
-          color="inherit"
-        >
-          Upgrade to Pro
-        </Button>
       </Stack>
     </Box>
   );
@@ -165,9 +151,10 @@ Nav.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function NavItem({ item }) {
-  const pathname = usePathname();
+function NavItem({ item, RouterLink, role = 'admin' }) {
 
+  console.log(item)
+  const pathname = usePathname();
   const active = item.path === pathname;
 
   return (
@@ -195,8 +182,8 @@ function NavItem({ item }) {
         {item.icon}
       </Box>
 
-      <Box component="span">{item.title} </Box>
-    </ListItemButton>
+      {<Box component="span">{item.title} </Box>
+      }    </ListItemButton>
   );
 }
 

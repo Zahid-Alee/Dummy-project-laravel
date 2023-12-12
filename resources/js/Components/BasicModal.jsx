@@ -14,6 +14,8 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  maxHeight: '80vh', // Set maximum height to 80% of the viewport height
+  overflowY: 'auto', // Enable vertical scrolling
 };
 
 export default function BasicModal({ open, close, children }) {

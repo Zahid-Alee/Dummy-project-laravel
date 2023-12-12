@@ -8,18 +8,15 @@ import CreatePlanForm from '../CreatePlanForm';
 import { RiDeleteBinLine, RiEditLine } from 'react-icons/ri';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-
-
-
-
+import CreateSchoolForm from '../CreatePlanForm';
 
 const BlogView = ({ view = false }) => {
 
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState(false);
-  const [features, setAllFeatures] = useState([]);
-  const [plans, setPlans] = useState([]);
-  const [selectedPlan, setSelectedPlan] = useState({});
+  // const [features, setAllFeatures] = useState([]);
+  const [schools, setSchools] = useState([]);
+  const [selectedSchool, setSelectedSchool] = useState({});
 
   const handleClose = (row) => {
     setOpen(false);
@@ -30,58 +27,41 @@ const BlogView = ({ view = false }) => {
   const handleEdit = async (row) => {
     setOpen(true);
     setEdit(true);
-    setSelectedPlan(row);
-
-    // await axios.post('/accept-req', formData).
-    //   then(() => {
-
-    //     toast.success('Request Accepted Successfuly');
-    //     fetchData();
-    //   })
-    //   .catch(() => toast.error('Request Rejected Successfuly')
-    //   )
+    setSelectedSchool(row);
 
   };
 
   const handleDelete = async (id) => {
-    // Logic for handling delete action
-    await axios.delete(`/plans/${id}`).
+    await axios.delete(`/schools/${id}`).
       then(() => {
-
-        toast.success('Request Accepted Successfuly');
+        toast.success('School Deleted Successfuly');
         fetchData();
       })
       .catch(() => toast.error('Request Rejected Successfuly')
       )
-    // Perform delete API call or local deletion and update plans state
   };
 
 
   const columns = [
     {
-      name: 'Plan Name',
-      selector: 'title',
+      name: 'School Name',
+      selector: 'name',
       sortable: true,
     },
     {
-      name: 'Price',
-      selector: 'price',
+      name: 'Address',
+      selector: 'location',
       sortable: true,
     },
     {
-      name: 'Updated',
-      selector: 'created_at',
+      name: 'District',
+      selector: 'district',
       sortable: true,
     },
     {
-      name: 'Features',
-      cell: (row) => (
-        <ul>
-          {row.features.map((feature) => (
-            <li key={feature.id}>{feature.name}</li>
-          ))}
-        </ul>
-      ),
+      name: 'Created',
+      selector: 'created',
+      sortable: true,
     },
     {
       name: 'Actions',
@@ -90,7 +70,6 @@ const BlogView = ({ view = false }) => {
           <span
             onClick={() => handleEdit(row)}
           >
-
             <RiEditLine size={20} />
 
           </span>
@@ -106,20 +85,24 @@ const BlogView = ({ view = false }) => {
   ];
 
   async function fetchData() {
-    try {
-      const [plansRes, featuresRes] = await Promise.all([
-        axios.get('/plans'),
-        axios.get('/api/features'),
-      ]);
-      setPlans(plansRes.data);
-      setAllFeatures(featuresRes.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+    axios.get('/schools').then((res) => {
+      const schools = res?.data?.map((school, index) => ({
+        id: school.id,
+        name: school.name,
+        location: school.location,
+        district_id: school?.district?.id,
+        district: school.district.name,
+        address: school.address,
+        created: school.created_at,
+      }));
+      setSchools(schools);
+    }).catch((e) => {
+
+      console.log(e)
+    })
+
   }
   useEffect(() => {
-
-
     fetchData();
   }, []);
 
@@ -134,19 +117,19 @@ const BlogView = ({ view = false }) => {
             variant="contained"
             color="inherit"
           >
-            New Package
+            New School
           </Button>
         </>
       )}
 
       <BasicModal open={open} close={handleClose}>
-        <CreatePlanForm edit={edit} updatedData={fetchData} editTtile={edit ? selectedPlan.title : ''} editId={selectedPlan?.id} editPrice={edit ? selectedPlan.price : 0} features={features} onClose={() => setOpen(false)} />
+        <CreateSchoolForm edit={edit} updatedData={fetchData} editName={edit ? selectedSchool.name : ''} editId={selectedSchool?.id} editLocation={edit ? selectedSchool.location : ''} district_id={selectedSchool.district_id}  onClose={() => setOpen(false)} />
       </BasicModal>
 
       <DataTable
-        title={!view && 'Plans'}
+        title={!view && 'Schools'}
         columns={columns}
-        data={plans}
+        data={schools}
         pagination
         paginationPerPage={10}
       />

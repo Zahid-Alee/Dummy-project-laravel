@@ -6,37 +6,44 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
-
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import UserTableToolbar from '../user-table-toolbar';
 import { applyFilter, getComparator } from '../utils';
 import { getUsersList } from '@/Pages/Admin/_mock/user';
+import { RiDeleteBack2Fill, RiDeleteBack2Line, RiDeleteBin2Fill, RiEdit2Fill } from 'react-icons/ri';
+import CreateUserForm from '../CreateUserForm';
+import BasicModal from '@/Components/BasicModal';
+import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 const UserPage = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [edit, setEdit] = useState(false);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedUser, setSelectedUser] = useState({});
 
   useEffect(() => {
-    getUsersList()
-      .then((data) => {
-        setUsers(data);
+    loadUser();
+  }, []);
+
+  const loadUser = async () => {
+
+    await axios.get('/users')
+      .then((res) => {
+        console.log(res.data)
+        setUsers(res.data);
       })
       .catch((message) => {
         console.log(message);
       });
-  }, []);
+  }
 
-  const handleSort = (column) => {
-    const isAsc = orderBy === column && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(column);
-  };
 
   const handleChangePage = (newPage) => {
     setPage(newPage);
@@ -47,75 +54,81 @@ const UserPage = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
 
-  const filteredUsers = applyFilter({
-    inputData: users,
-    comparator: getComparator(order, orderBy),
-    filterName,
-  });
+  const editUser = (row) => {
+    setEdit(true);
+    setSelectedUser(row)
+    setOpen(true);
+  }
 
   const columns = [
     { name: 'Name', selector: 'name', sortable: true },
     { name: 'Email', selector: 'email', sortable: true },
+    , { name: 'Registered on', selector: 'created_at', sortable: true },
     { name: 'Role', selector: 'role', sortable: true },
-    { name: 'Registered on', selector: 'created', sortable: true },
     { name: 'Status', selector: 'status', sortable: true },
     {
       name: 'Actions',
       cell: (row) => (
-        <strong>
-          {/* <Button variant="contained" color="primary" onClick={() => handleEdit(row)}>
-            Edit
-          </Button>
-          <Button variant="contained" color="secondary" onClick={() => handleDelete(row.id)}>
-            Delete
-          </Button> */}
-          Viewable only
-        </strong>
+        <div>
+          <span onClick={() => { editUser(row) }}>
+            <RiEdit2Fill />
+          </span>
+          <span onClick={() => { handleDelete(row.id) }}>
+            <RiDeleteBin2Fill />
+          </span>
+        </div>
       ),
       allowOverflow: true,
       button: true,
     },
   ];
 
-  const handleEdit = (row) => {
-    // Handle edit action
-    console.log('Edit action for row:', row);
+  const notify = (message) => {
+
+    toast.success(message);
+
   };
 
-  const handleDelete = (id) => {
-    // Handle delete action
-    console.log('Delete action for id:', id);
-    // Implement logic for deletion
+  const handleDelete = async (id) => {
+
+    await axios.delete(`/users/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        loadUser();
+      })
+      .catch((e) => {
+        console.log(e)
+      })
   };
 
   return (
     <Container>
+
+      <Toaster />
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        <Button variant="contained"
+          onClick={() => { setOpen(true); setEdit(false) }}
+          color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New User
         </Button>
       </Stack>
 
       <Card>
-        <UserTableToolbar
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
 
+        <BasicModal open={open} close={() => setOpen(false)}>
+          <CreateUserForm notify={notify} edit={edit} updatedData={loadUser} userName={edit ? selectedUser?.name : ''} editId={selectedUser?.id} userRoleID={edit ? selectedUser.role_id : 3} userEmail={edit ? selectedUser?.email : ''} onClose={() => setOpen(false)} />
+
+        </BasicModal>
         <Scrollbar>
           <TableContainer>
             <DataTable
               columns={columns}
-              data={filteredUsers}
+              data={users}
               pagination
               paginationPerPage={rowsPerPage}
-              paginationTotalRows={filteredUsers.length}
+              paginationTotalRows={users.length}
               onChangePage={handleChangePage}
               onChangeRowsPerPage={handleChangeRowsPerPage}
               sortServer
@@ -124,16 +137,6 @@ const UserPage = () => {
             />
           </TableContainer>
         </Scrollbar>
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={users.length}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Card>
     </Container>
   );

@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -45,13 +46,17 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function plans()
+    public function role()
     {
-        return $this->belongsToMany(Plan::class)->withTimestamps();
+        return $this->belongsTo(Role::class);
     }
 
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
+    }
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
     }
 }

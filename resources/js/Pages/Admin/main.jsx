@@ -10,7 +10,7 @@ import React from 'react';
 
 function Main(){
   return <HelmetProvider>
-  <BrowserRouter basename='/admin/dash'>
+  <BrowserRouter basename='/admin'>
     <Suspense>
       <App />
     </Suspense>

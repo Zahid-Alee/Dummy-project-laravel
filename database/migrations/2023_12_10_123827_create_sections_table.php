@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('features', function (Blueprint $table) {
+        Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->unsignedBigInteger('class_id'); // Foreign key to class_models table
+            $table->string('name', 100);
+            $table->integer('capacity');
+            $table->foreign('class_id')->references('id')->on('student_classes')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('feature');
+        Schema::dropIfExists('sections');
     }
 };

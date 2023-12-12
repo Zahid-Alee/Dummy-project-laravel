@@ -8,12 +8,10 @@ class CreateNotificationsTable extends Migration {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('plan_id')->nullable();
             $table->text('message');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('plan_id')->references('id')->on('plans')->onDelete('cascade');
             $table->softDeletes();
 
         });

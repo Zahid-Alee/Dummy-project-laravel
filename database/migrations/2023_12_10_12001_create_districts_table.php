@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-       
-    Schema::create('feature_plan', function (Blueprint $table) {
-        $table->foreignId('plan_id')->constrained()->onDelete('cascade');
-        $table->foreignId('feature_id')->constrained()->onDelete('cascade');
-        $table->timestamps();
-        $table->softDeletes();
-
-    });
+        Schema::create('districts', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')  ;
+            $table->string('city');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('feature_plan');
+        Schema::dropIfExists('districts');
     }
 };

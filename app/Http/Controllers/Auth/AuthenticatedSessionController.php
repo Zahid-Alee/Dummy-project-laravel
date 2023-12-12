@@ -15,9 +15,6 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): Response
     {
         return Inertia::render('Auth/Login', [
@@ -26,37 +23,35 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-    
+        
         $request->session()->regenerate();
+        
+        $user = $request->user();
     
-        if ($request->user()->role === 'admin') {
-            return redirect('/admin/dash');
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
         }
-    
-        return redirect(RouteServiceProvider::HOME);
+        
+        if ($user->role === 'teacher') {
+            return redirect()->route('teacher.dashboard');
+        }
+        
+        if ($user->role === 'school_admin') {
+            return redirect()->route('school.admin.dashboard');
+        }
+        
+        return redirect()->route('home');
     }
-    
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
 {
-    $role = $request->user()->role ?? null;
 
     Auth::guard('web')->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-
-    if ($role === 'admin') {
-        return Redirect::to('/admin/dash/login');
-    }
 
     return redirect('/');
 }

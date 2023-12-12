@@ -2,36 +2,37 @@ import React, { useEffect, useState } from 'react';
 import { Chart } from 'react-google-charts';
 import axios from 'axios';
 
-const SalesChart = () => {
-  const [salesData, setSalesData] = useState([]);
+const SchoolChart = () => {
+  const [schoolData, setSchoolData] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/get-sales-data') // Your API endpoint to fetch sales data
+    axios.get('/schools') // Your API endpoint to fetch school data
       .then(response => {
-        setSalesData(response.data);
+        setSchoolData(response.data);
       })
       .catch(error => {
-        console.error('Error fetching sales data:', error);
+        console.error('Error fetching school data:', error);
       });
   }, []);
 
   const formatDataForPieChart = () => {
-    const dataForPieChart = salesData?.reduce((acc, sale) => {
-      const { title } = sale?.plan??'';
-      acc[title] = acc[title] ? acc[title] + 1 : 1;
-      return acc;
-    }, {});
+    const districtCounts = {};
 
-    const formattedData = [['Plan', 'Sales']];
-    for (const planTitle in dataForPieChart) {
-      formattedData.push([planTitle, dataForPieChart[planTitle]]);
+    schoolData.forEach(school => {
+      const districtName = school?.district?.name || 'Unknown';
+      districtCounts[districtName] = (districtCounts[districtName] || 0) + 1;
+    });
+
+    const chartData = [['District', 'School Count']];
+    for (const district in districtCounts) {
+      chartData.push([district, districtCounts[district]]);
     }
-    return formattedData;
+    return chartData;
   };
 
   return (
     <div>
-      <h2>Plans Sold</h2>
+      <h2>Schools by District</h2>
       <Chart
         width={'500px'}
         height={'300px'}
@@ -39,11 +40,11 @@ const SalesChart = () => {
         loader={<div>Loading Chart</div>}
         data={formatDataForPieChart()}
         options={{
-          title: 'Plans Sold',
+          title: 'Schools by District',
         }}
       />
     </div>
   );
 };
 
-export default SalesChart;
+export default SchoolChart;

@@ -9,12 +9,12 @@ import Header from './header';
 
 // ----------------------------------------------------------------------
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout({ children, role }) {
   const [openNav, setOpenNav] = useState(false);
 
   return (
     <>
-      <Header onOpenNav={() => setOpenNav(true)} />
+      <Header role={role} onOpenNav={() => setOpenNav(true)} />
 
       <Box
         sx={{
@@ -23,7 +23,7 @@ export default function DashboardLayout({ children }) {
           flexDirection: { xs: 'column', lg: 'row' },
         }}
       >
-        <Nav openNav={openNav} onCloseNav={() => setOpenNav(false)} />
+        <Nav role={role} openNav={openNav} onCloseNav={() => setOpenNav(false)} />
 
         <Main>{children}</Main>
       </Box>

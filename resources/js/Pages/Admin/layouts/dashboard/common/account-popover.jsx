@@ -10,25 +10,24 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { account } from '../../../_mock/account';
+import { Link } from 'react-router-dom';
+import { router } from '@inertiajs/react';
 
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
+
   {
     label: 'Profile',
     icon: 'eva:person-fill',
+    link: "/profile"
   },
   {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
+    label: 'Logout',
+    icon: '',
+    link: "/logout"
   },
 ];
-
-// ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
@@ -37,8 +36,10 @@ export default function AccountPopover() {
     setOpen(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setOpen(null);
+  const handleClose = (option) => {
+
+    window.location.href = `${option.link}`;
+
   };
 
   return (
@@ -95,7 +96,7 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         {MENU_OPTIONS.map((option) => (
-          <MenuItem key={option.label} onClick={handleClose}>
+          <MenuItem key={option.label} onClick={() => { handleClose(option) }}>
             {option.label}
           </MenuItem>
         ))}

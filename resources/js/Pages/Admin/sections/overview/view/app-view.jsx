@@ -17,74 +17,82 @@ import AppCurrentSubject from '../app-current-subject';
 import AppConversionRates from '../app-conversion-rates';
 import SalesChart from './SalesData';
 import UserCharts from './RegisteredUsers';
+import { getUsersList } from '@/Pages/Admin/_mock/user';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { FaSchool, FaUser } from 'react-icons/fa';
 
 // ----------------------------------------------------------------------
 
 export default function AppView() {
+
+  const [users, setUsers] = useState([])
+  const [schools, setSchools] = useState([])
+
+  useEffect(() => {
+
+    getUsersList().then((res) => {
+      setUsers(res);
+    })
+
+    axios.get('/schools')
+      .then((res) => setSchools(res.data)).catch((e) => console.log(e))
+
+  }, [])
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Hi, Welcome back 👋
+        Hi, Welcome back  👋
       </Typography>
 
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Weekly Sales"
-            total={714000}
+            title="Users"
+            total={users?.length}
             color="success"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+            icon={<FaUser size={30}/>}
           />
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="New Users"
-            total={1352831}
+            title="Schools"
+            total={schools?.length}
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            icon={<FaSchool size={30}/>}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        {/* <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Item Orders"
             total={1723315}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} sm={6} md={3}>
+        {/* <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Bug Reports"
             total={234}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={6} lg={8}>
-          <UserCharts/>
+          <UserCharts />
         </Grid>
 
         <Grid xs={12} md={6} lg={4}>
-          {/* <AppCurrentVisits
-            title="Current Visits"
-            chart={{
-              series: [
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
-              ],
-            }}
-          /> */}
-        <SalesChart/>
+
+          <SalesChart />
 
         </Grid>
 
-    
+
 
 
         {/* <Grid xs={12} md={6} lg={4}>
@@ -114,7 +122,7 @@ export default function AppView() {
             ]}
           />
         </Grid> */}
-        
+
         {/* <Grid xs={12} md={6} lg={8}>
           <AppTasks
             title="Tasks"

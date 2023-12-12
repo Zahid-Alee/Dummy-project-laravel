@@ -9,23 +9,64 @@ const icon = (name) => (
 const navConfig = [
   {
     title: 'dashboard',
-    path: '/',
+    path: 'dash',
     icon: icon('ic_analytics'),
+    role:['admin']
   },
   {
     title: 'user',
-    path: '/user',
+    path: 'user',
     icon: icon('ic_user'),
+    role:['admin']
+
   },
   {
-    title: 'Requests',
-    path: '/products',
+    title: 'Class',
+    path: 'classes',
     icon: icon('ic_cart'),
+    role:['school_admin','teacher']
   },
   {
-    title: 'Packages',
-    path: '/blog',
+    title: 'Sections',
+    path: 'sections',
+    icon: icon('ic_cart'),
+    role:['school_admin']
+
+  },
+  {
+    title: 'School Admin',
+    path: 'school-admin',
+    icon: icon('ic_cart'),
+    role:['admin']
+
+  },
+  {
+    title: 'Students',
+    path: 'students',
+    icon: icon('ic_cart'),
+    role:['admin','school_admin','teacher']
+
+  },
+  {
+    title: 'Teachers',
+    path: 'teachers',
+    icon: icon('ic_cart'),
+    role:['admin']
+
+  },
+  {
+    title: 'Schools',
+    path: 'schools',
     icon: icon('ic_blog'),
+    role:['admin']
+
+  },
+  {
+    title: 'Attendance',
+    path: 'attendance',
+    icon: icon('ic_blog'),
+    role:['teacher']
+
   },
   {
     title: 'Logout',

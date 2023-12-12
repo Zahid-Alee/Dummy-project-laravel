@@ -1,11 +1,22 @@
 import { Link } from '@inertiajs/react';
-import React from 'react';
+import React, { useState } from 'react';
 import Dropdown from './Dropdown';
+import axios from 'axios';
 
-const Navbar = ({auth}) => {
+const Navbar = ({ auth }) => {
+
+    const [role, setRole] = useState('');
+    const dashboard = {
+        admin: '/admin/dash',
+        teacher: '/teacher/classes',
+        school_admin: "/school-admin/classes"
+    }
+
+    axios.get(`/check_role/${auth?.user?.id}`).then((res) => setRole(res.data)).catch(e => console.log(e))
+
     return (
 
-        <nav style={{background:"maroon"}}
+        <nav style={{ background: "maroon" }}
             class="flex-no-wrap relative flex w-full items-center justify-between  py-2 shadow-md shadow-black/5 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4">
             <div class="flex w-full flex-wrap items-center justify-between px-3">
                 <button
@@ -47,12 +58,12 @@ const Navbar = ({auth}) => {
                         class="list-style-none mr-auto flex flex-col pl-0 lg:flex-row"
                         data-te-navbar-nav-ref>
                         <li class="lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                            <a
-                                class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-zinc-400"
-                                href="#"
+                            {auth?.user && <a
+                                style={{color:'white'}}
+                                href={dashboard[role]}
                                 data-te-nav-link-ref
-                            >Dashboard</a
-                            >
+                            >Dashboard
+                            </a>}
                         </li>
                         <li class=" lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                             <a
@@ -76,40 +87,40 @@ const Navbar = ({auth}) => {
 
                     {auth.user ? (
                         <div className="ms-3 relative">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md-3 text-white dark:text-gray-400  hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                            <Dropdown>
+                                <Dropdown.Trigger>
+                                    <span className="inline-flex rounded-md">
+                                        <button
+                                            type="button"
+                                            className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md-3 text-white dark:text-gray-400  hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                                        >
+                                            {auth?.user?.name}
+
+                                            <svg
+                                                className="ms-2 -me-0.5 h-4 w-4"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
                                             >
-                                                {auth?.user?.name}
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </span>
+                                </Dropdown.Trigger>
 
-                                                <svg
-                                                    className="ms-2 -me-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                        <Dropdown.Link href={route('logout')} method="get" as="button">
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                     ) : (
+                                <Dropdown.Content>
+                                    <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                    <Dropdown.Link href={route('logout')} method="get" as="button">
+                                        Log Out
+                                    </Dropdown.Link>
+                                </Dropdown.Content>
+                            </Dropdown>
+                        </div>
+                    ) : (
                         <>
                             <Link
                                 href={route('login')}

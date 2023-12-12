@@ -22,40 +22,22 @@ import axios from 'axios';
 export default function UserBlogView({ view = false }) {
   const [open, setOpen] = useState(false);
   const [features, setAllFeatures] = useState([]);
-  const [plans, setPlans] = useState([]);
+  const [schools, setSchools] = useState([]);
   const handleClose = () => {
     setOpen(false);
   }
 
   useEffect(() => {
 
-    // const timer = setInterval(() => {
-
-    //   const container = document.querySelector('.grid-plans-container');
-    //   const divsInContainer = container.querySelectorAll('div');
-    //   if (divsInContainer.length > 1) {
-    //     clearInterval(timer);
-    //   }
-    //   divsInContainer?.forEach((div) => {
-    //     if (div.innerHTML.trim() === '') {
-    //       div.remove();
-    //     }
-    //   });
-
-    // }, 100);
-
-
-
-    axios.get('/plans').then(async (res) => {
-      setPlans(res.data);
-      console.log(res.data)
-      await axios.get('/api/features')
-        .then(response => {
-          setAllFeatures(response.data);
-        })
-        .catch(error => {
-          console.error('Error fetching features:', error);
-        });
+    axios.get('/schools').then(async (res) => {
+      setSchools(res.data);
+      // await axios.get('/api/features')
+      //   .then(response => {
+      //     setAllFeatures(response.data);
+      //   })
+      //   .catch(error => {
+      //     console.error('Error fetching features:', error);
+      //   });
     }).catch(() => {
       console.log('error');
     })
@@ -84,8 +66,8 @@ export default function UserBlogView({ view = false }) {
         />
       </Stack>}
 
-      <div className='grid-plans-container' >
-        {plans?.length > 0 && plans?.map((plan, index) => (
+      <div className='grid-schools-container' >
+        {schools?.length > 0 && schools?.map((plan, index) => (
           <PackageCard view={view} plan={plan} features={features} key={index} >
           </PackageCard>
         ))}

@@ -1,5 +1,4 @@
-import { sample } from 'lodash';
-import { faker } from '@faker-js/faker';
+
 import axios from 'axios';
 
 // ----------------------------------------------------------------------
@@ -7,7 +6,7 @@ import axios from 'axios';
 export const getUsersList = () => {
 
   return new Promise(async (res, rej) => {
-    await axios.get('/api/users').then((d) => {
+    await axios.get('/users').then((d) => {
       const users = d?.data?.map((user, index) => ({
         id: user.id,
         avatarUrl: `/assets/images/avatars/avatar_${index + 1}.jpg`,
@@ -16,7 +15,7 @@ export const getUsersList = () => {
         created: user?.updated_at,
         isVerified: user.email_verified_at ? 'true' : 'false',
         status: 'active',
-        role: 'customer'
+        role_id: user.role.id,
       }));
       res(users);
     }).catch((e) => {

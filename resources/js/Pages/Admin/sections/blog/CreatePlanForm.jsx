@@ -1,93 +1,94 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, TextField } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import toast, { Toaster } from 'react-hot-toast';
 
-const CreatePlanForm = ({ onClose,updatedData, features, edit = false, editId , editTtile='',editFeatures=[],editPrice=0 }) => {
- 
- 
-  const [packageName, setPackageName] = useState(editTtile);
-  const [selectedFeatures, setSelectedFeatures] = useState(editFeatures);
-  const [price, setSelectedPrice] = useState(editPrice);
+const CreateSchoolForm = ({ onClose, district_id, updatedData, edit = false, editId, editName = '', editLocation = '' }) => {
+  const [name, setName] = useState(editName);
+  const [location, setLocation] = useState(editLocation);
+  const [districts, setDistricts] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState(district_id);
 
-  const handleFeatureChange = (event) => {
-    setSelectedFeatures(event.target.value);
-  };
+  useEffect(() => {
 
-  const handleSubmit = (event) => {
+    axios.get('/districts')
+      .then(response => {
+        setDistricts(response.data); // Assuming the response contains an array of districts
+      })
+      .catch(error => {
+        console.error('Error fetching districts:', error);
+      });
+  }, []);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const planData = {
-      title: packageName,
-      price: price,
-      feature_ids: selectedFeatures,
+    const schoolData = {
+      name: name,
+      location: location,
+      district_id: selectedDistrict,
     };
 
     if (edit) {
-      return axios.put(`/plans/${editId}`, planData)
+      return await axios.put(`/schools/${editId}`, schoolData)
         .then(response => {
-          // console.log('Plan created:', response.data);
-          toast.success('Updated Plan')
+          toast.success('Updated School');
           updatedData();
           onClose();
         })
         .catch(error => {
-          console.error('Error creating plan:', error);
+          console.error('Error updating school:', error);
         });
     }
 
-    axios.post('/plans', planData)
+    await axios.post('/schools', schoolData)
       .then(response => {
-        toast.success('Plan created:', response.data);
+        toast.success('School created:', response.data);
         updatedData();
         onClose();
       })
       .catch(error => {
-        console.error('Error updating plan:', error);
+        console.error('Error creating school:', error);
       });
-
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Toaster/>
+      <Toaster />
       <TextField
-        label="Plan Name"
-        value={packageName}
-        onChange={(e) => setPackageName(e.target.value)}
+        label="School Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         variant="outlined"
         margin="normal"
         fullWidth
       />
       <TextField
-        label="Price"
-        value={price}
-        onChange={(e) => setSelectedPrice(e.target.value)}
+        label="Location"
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
         variant="outlined"
         margin="normal"
         fullWidth
       />
-      <FormControl >
-        <InputLabel id="features-select-label">Select Features</InputLabel>
+      <FormControl fullWidth variant="outlined" margin="normal">
+        <InputLabel id="district-select-label">Select District</InputLabel>
         <Select
-          labelId="features-select-label"
-          id="features-select"
-          multiple
-          value={selectedFeatures}
-          onChange={handleFeatureChange}
-          renderValue={(selected) => selected.join(', ')}
-          variant="outlined"
+          labelId="district-select-label"
+          id="district-select"
+          value={selectedDistrict}
+          onChange={(e) => setSelectedDistrict(e.target.value)}
+          label="Select District"
         >
-          {features?.map((feature) => (
-            <MenuItem key={feature.id} value={feature.id}>
-              <Checkbox checked={selectedFeatures.indexOf(feature.id) > -1} />
-              <ListItemText primary={feature.name} />
+          {districts.map(district => (
+            <MenuItem key={district.id} value={district.id}>
+              {district.name}
             </MenuItem>
           ))}
         </Select>
       </FormControl>
-      <Button type="submit" variant="contained" color="primary">Create Plan</Button>
+      <Button type="submit" variant="contained" color="primary">Create School</Button>
     </form>
   );
 };
 
-export default CreatePlanForm;
+export default CreateSchoolForm;
