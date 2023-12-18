@@ -10,16 +10,14 @@ class PlanController extends Controller
 {
     public function index()
     {
-        $plans = Plan::with('features')->get();
+        $plans = Plan::with(['features', 'washingPoint'])->get();
         return response()->json($plans);
     }
 
     public function store(Request $request)
     {
-
-        $planData = $request->only(['title', 'price']);
+        $planData = $request->only(['title', 'price', 'washing_point_id']);
         $selectedFeatureIds = $request->input('feature_ids', []);
-
         $plan = Plan::create($planData);
         $plan->features()->attach($selectedFeatureIds);
         return response()->json($plan);
@@ -27,7 +25,7 @@ class PlanController extends Controller
 
     public function show($id)
     {
-        $plan = Plan::with('features')->find($id);
+        $plan = Plan::with(['features', 'washingPoint'])->find($id);
 
         if (!$plan) {
             return response()->json(['error' => 'Plan not found'], 404);
@@ -44,8 +42,10 @@ class PlanController extends Controller
             return response()->json(['error' => 'Plan not found'], 404);
         }
 
-        $plan->update($request->only(['title', 'price']));
+        $planData = $request->only(['title', 'price', 'washing_point_id']);
         $selectedFeatureIds = $request->input('feature_ids', []);
+
+        $plan->update($planData);
         $plan->features()->sync($selectedFeatureIds);
 
         return response()->json($plan);

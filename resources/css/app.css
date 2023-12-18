@@ -31,9 +31,91 @@ a {
 a:hover,
 a:active,
 a:focus {
-    color: maroon;
+    color: black;
     outline: none;
     text-decoration: none;
+}
+
+::-webkit-scrollbar {
+    width:7px;
+    height:5px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+ .css-1v9j2ct{
+
+    display: none;
+ }
+.hGkspH{
+
+    font-weight: 500;
+}
+.ofEne{
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.simplebar-wrapper{
+    background-color: black !important;
+}
+.simplebar-mask{
+
+    background-color: black;
+}
+
+input:focus ,input:focus-visible ,input:focus-within{
+    border: 0px !important;
+    outline: 0px !important;
+    --tw-ring-offset-color: #fff;
+}
+
+
+.simplebar-content{
+
+    background-color:#212B36;
+}
+
+.simplebar-content a {
+
+    color: white !important;
+    
+}
+
+.css-djqxq7-MuiPaper-root-MuiAppBar-root {
+
+    background-color: #212B36 !important;
+    position: relative;
+    left: 278px !important;
+    height: auto !important;
+}
+
+
+.css-1anrb5w {
+
+    width: auto !important;
+    display: flex;
+    align-items: center;
+    margin: 0 10px !important;
+}
+
+.css-0 {
+    letter-spacing: 1px;
+}
+
+.css-1a6vgkv{
+    background-color: #212B36 !important;
 }
 
 .btn.btn-custom {
@@ -42,7 +124,7 @@ a:focus {
     font-size: 16px;
     font-weight: 500;
     color: black;
-    background: maroon;
+    background: black;
     border: none;
     border-radius: 60px;
     box-shadow: inset 0 0 0 0 #01040d;
@@ -90,7 +172,7 @@ a:focus {
     right: 15px;
     bottom: 15px;
     transition: .5s;
-    background: maroon;
+    background: black;
     border-radius: 44px;
     z-index: 9;
 }
@@ -123,7 +205,7 @@ a:focus {
 
 .top-bar .logo h1 {
     margin: -4px 0 0 0;
-    color: maroon;
+    color: black;
     font-size: 40px;
     line-height: 50px;
     font-weight: 800;
@@ -193,7 +275,7 @@ a:focus {
 nav,
 .nav-bar {
 
-    /* background-color: maroon; */
+    /* background-color: black; */
     position: sticky;
     top: 0px;
     z-index: 100;
@@ -233,7 +315,7 @@ nav a {
     margin-bottom: 45px;
     padding: 90px 0;
     text-align: center;
-    background: maroon;
+    background: black;
     border-top: 1px dotted #ffffff;
 }
 
@@ -264,7 +346,7 @@ nav a {
 }
 
 .page-header a:hover {
-    color: maroon;
+    color: black;
 }
 
 .page-header a::after {
@@ -330,7 +412,7 @@ nav a {
     font-weight: 700;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: maroon;
+    color: black;
 }
 
 .section-header p::after {
@@ -340,7 +422,7 @@ nav a {
     height: 2px;
     left: 25%;
     bottom: 0;
-    background: maroon;
+    background: black;
 }
 
 .section-header.text-left p::after {
@@ -414,7 +496,7 @@ nav a {
 
 .about .about-content ul li i {
     margin-right: 8px;
-    color: maroon;
+    color: black;
 }
 
 
@@ -446,7 +528,7 @@ nav a {
     margin: 0;
     font-size: 60px;
     line-height: 60px;
-    background-image: linear-gradient(maroon, #01040c);
+    background-image: linear-gradient(black, #01040c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     transition: .5s;
@@ -486,7 +568,7 @@ nav a {
 .facts .facts-item i {
     margin-top: 15px;
     font-size: 45px;
-    color: maroon;
+    color: black;
 }
 
 .facts .facts-text {
@@ -577,7 +659,7 @@ nav a {
 
 .price .price-item.featured-item h2,
 .price .price-item.featured-item h3 {
-    color: maroon;
+    color: black;
 }
 
 .price .price-body {
@@ -599,7 +681,7 @@ nav a {
 }
 
 .price .price-body ul li i.fa-check-circle {
-    color: maroon;
+    color: black;
 }
 
 .price .price-body ul li i.fa-times-circle {
@@ -611,20 +693,20 @@ nav a {
 }
 
 .price .price-item .price-footer .btn.btn-custom {
-    color: maroon;
+    color: black;
     background: #ffff;
-    box-shadow: inset 0 0 0 0 maroon;
+    box-shadow: inset 0 0 0 0 black;
 }
 
 .price .price-item .price-footer .btn.btn-custom:hover {
     color: #ffffff;
-    background: maroon;
-    box-shadow: inset 200px 0 0 0 maroon;
+    background: black;
+    box-shadow: inset 200px 0 0 0 black;
 }
 
 .price .price-item.featured-item .price-footer .btn.btn-custom {
     color: #ffffff;
-    background: maroon;
+    background: black;
     box-shadow: inset 0 0 0 0 black;
 }
 
@@ -652,7 +734,7 @@ nav a {
 .location .location-item i {
     padding-top: 3px;
     font-size: 30px;
-    color: maroon;
+    color: black;
 }
 
 .location .location-text {
@@ -675,7 +757,7 @@ nav a {
 
 .location .location-form {
     padding: 45px 30px;
-    background: maroon;
+    background: black;
     border-radius: 5px;
 }
 
@@ -716,7 +798,7 @@ nav a {
 
 .location .location-form .btn.btn-custom {
     width: 100%;
-    color: maroon;
+    color: black;
     background: #ffffff;
     box-shadow: inset 0 0 0 0 black;
 }
@@ -768,13 +850,13 @@ nav a {
     width: 100%;
     padding: 35px 30px 30px 30px;
     text-align: center;
-    background: maroon;
+    background: black;
     border-radius: 0 0 5px 5px;
     transition: .5s;
 }
 
 .team .team-item:hover .team-text {
-    background: maroon;
+    background: black;
 }
 
 .team .team-text h2 {
@@ -809,7 +891,7 @@ nav a {
     text-align: center;
     font-size: 16px;
     color: #ffffff;
-    background: maroon;
+    background: black;
     border-radius: 40px;
     transition: .5s;
 }
@@ -882,7 +964,7 @@ nav a {
     font-size: 25px;
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    color: maroon;
+    color: black;
     margin-right: 10px;
 }
 
@@ -901,7 +983,7 @@ nav a {
 }
 
 .testimonial .owl-dot.active {
-    background: maroon;
+    background: black;
 }
 
 
@@ -913,7 +995,7 @@ nav a {
     position: relative;
     margin-top: 45px;
     padding-top: 90px;
-    background: maroon;
+    background: black;
 }
 
 .footer .footer-contact,

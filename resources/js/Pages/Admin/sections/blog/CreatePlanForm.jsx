@@ -3,15 +3,32 @@ import axios from 'axios';
 import { Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, TextField } from '@mui/material';
 import toast, { Toaster } from 'react-hot-toast';
 
-const CreatePlanForm = ({ onClose,updatedData, features, edit = false, editId , editTtile='',editFeatures=[],editPrice=0 }) => {
+const CreatePlanForm = ({
+  onClose,
+  updatedData,
+  features,
+  washingPoints,
+  edit = false,
+  editId,
+  editTtile = '',
+  editFeatures = [],
+  editPrice = 0,
+  notify,
+  }) => {
  
  
   const [packageName, setPackageName] = useState(editTtile);
   const [selectedFeatures, setSelectedFeatures] = useState(editFeatures);
   const [price, setSelectedPrice] = useState(editPrice);
+  const [selectedWashingPoint, setSelectedWashingPoint] = useState('');
+
+
 
   const handleFeatureChange = (event) => {
     setSelectedFeatures(event.target.value);
+  };
+  const handleWashingPointChange = (event) => {
+    setSelectedWashingPoint(event.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -20,26 +37,30 @@ const CreatePlanForm = ({ onClose,updatedData, features, edit = false, editId , 
       title: packageName,
       price: price,
       feature_ids: selectedFeatures,
+      washing_point_id: selectedWashingPoint,
+
     };
 
     if (edit) {
       return axios.put(`/plans/${editId}`, planData)
         .then(response => {
-          // console.log('Plan created:', response.data);
           toast.success('Updated Plan')
           updatedData();
           onClose();
+          notify('Updated Plan','success');
         })
         .catch(error => {
           console.error('Error creating plan:', error);
+          notify('Error try again','error');
+
         });
     }
 
     axios.post('/plans', planData)
       .then(response => {
-        toast.success('Plan created:', response.data);
         updatedData();
         onClose();
+        notify('Updated Plan','success');
       })
       .catch(error => {
         console.error('Error updating plan:', error);
@@ -48,8 +69,7 @@ const CreatePlanForm = ({ onClose,updatedData, features, edit = false, editId , 
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Toaster/>
+    <form style={{display:'flex',flexFlow:"column", gap:'10px'}} onSubmit={handleSubmit}>
       <TextField
         label="Plan Name"
         value={packageName}
@@ -66,6 +86,23 @@ const CreatePlanForm = ({ onClose,updatedData, features, edit = false, editId , 
         margin="normal"
         fullWidth
       />
+      <FormControl>
+        <InputLabel id="washing-point-select-label">Select Washing Point</InputLabel>
+        <Select
+          labelId="washing-point-select-label"
+          id="washing-point-select"
+          value={selectedWashingPoint}
+          onChange={handleWashingPointChange}
+          variant="outlined"
+        >
+          {washingPoints?.map((point) => (
+            <MenuItem key={point.id} value={point.id}>
+              {point.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       <FormControl >
         <InputLabel id="features-select-label">Select Features</InputLabel>
         <Select

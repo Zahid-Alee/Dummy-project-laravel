@@ -19,28 +19,28 @@ const navConfig = [
   },
   {
     title: 'Requests',
-    path: '/products',
+    path: '/request',
     icon: icon('ic_cart'),
   },
   {
-    title: 'Packages',
-    path: '/blog',
+    title: 'Washing Points',
+    path: '/points',
+    icon: icon('ic_cart'),
+  },
+  {
+    title: 'Plans',
+    path: '/plans',
+    icon: icon('ic_blog'),
+  },
+  {
+    title: 'User Feedback',
+    path: '/feedbacks',
     icon: icon('ic_blog'),
   },
   {
     title: 'Logout',
     path: 'http://127.0.0.1:8000/logout',
     icon: icon('ic_lock'),
-  },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
   },
 ];
 

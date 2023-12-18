@@ -9,51 +9,52 @@ import { RiDeleteBinLine, RiEditLine } from 'react-icons/ri';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
-
-
-
-
 const BlogView = ({ view = false }) => {
 
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState(false);
   const [features, setAllFeatures] = useState([]);
   const [plans, setPlans] = useState([]);
-  const [selectedPlan, setSelectedPlan] = useState({});
+  const [washingPoints, setWashingPoints] = useState([]);
+  const [selectedPlan, setSelectedPlan] = useState(null)
+
+  async function fetchWashingPoints() {
+    try {
+      const response = await axios.get('/points');
+      setWashingPoints(response.data);
+    } catch (error) {
+      console.error('Error fetching washing points:', error);
+    }
+  }
 
   const handleClose = (row) => {
     setOpen(false);
     setEdit(false);
   };
 
+  const notify = (message, type) => {
+
+    if (type === 'success') {
+      return toast.success(message)
+    }
+    return toast.error(message)
+  }
 
   const handleEdit = async (row) => {
     setOpen(true);
     setEdit(true);
     setSelectedPlan(row);
-
-    // await axios.post('/accept-req', formData).
-    //   then(() => {
-
-    //     toast.success('Request Accepted Successfuly');
-    //     fetchData();
-    //   })
-    //   .catch(() => toast.error('Request Rejected Successfuly')
-    //   )
-
   };
 
   const handleDelete = async (id) => {
-    // Logic for handling delete action
     await axios.delete(`/plans/${id}`).
       then(() => {
 
         toast.success('Request Accepted Successfuly');
         fetchData();
       })
-      .catch(() => toast.error('Request Rejected Successfuly')
+      .catch(() => toast.error('Request Rejected ')
       )
-    // Perform delete API call or local deletion and update plans state
   };
 
 
@@ -72,6 +73,16 @@ const BlogView = ({ view = false }) => {
       name: 'Updated',
       selector: 'created_at',
       sortable: true,
+    },
+    {
+      name: 'Washing Point',
+      selector: 'washing_point_id',
+      cell: (row) => {
+        const washingPoint = washingPoints.find(
+          (point) => point.id === row.washing_point_id
+        );
+        return washingPoint ? washingPoint.name : 'Not assigned';
+      },
     },
     {
       name: 'Features',
@@ -119,7 +130,7 @@ const BlogView = ({ view = false }) => {
   }
   useEffect(() => {
 
-
+    fetchWashingPoints();
     fetchData();
   }, []);
 
@@ -127,30 +138,41 @@ const BlogView = ({ view = false }) => {
 
   return (
     <Container>
-      {!view && (
-        <>
-          <Button
-            onClick={() => { setOpen(true); setEdit(false) }}
-            variant="contained"
-            color="inherit"
-          >
-            New Package
-          </Button>
-        </>
-      )}
+    <Toaster />
 
-      <BasicModal open={open} close={handleClose}>
-        <CreatePlanForm edit={edit} updatedData={fetchData} editTtile={edit ? selectedPlan.title : ''} editId={selectedPlan?.id} editPrice={edit ? selectedPlan.price : 0} features={features} onClose={() => setOpen(false)} />
-      </BasicModal>
+    {!view && (
+      <>
+        <Button
+          onClick={() => {
+            setOpen(true);
+            setEdit(false);
+          }}
+          variant="contained"
+          color="inherit"
+        >
+          New Plan
+        </Button>
+      </>
+    )}
 
-      <DataTable
-        title={!view && 'Plans'}
-        columns={columns}
-        data={plans}
-        pagination
-        paginationPerPage={10}
+    <BasicModal open={open} close={handleClose}>
+      <CreatePlanForm
+        edit={edit}
+        notify={notify}
+        updatedData={fetchData}
+        editTtile={edit ? selectedPlan.title : ''}
+        editId={selectedPlan?.id}
+        editPrice={edit ? selectedPlan.price : 0}
+        features={features}
+        washingPoints={washingPoints} // Pass washingPoints to the form
+        selectedWashingPoint={edit ? selectedPlan.washing_point_id : null}
+        onClose={() => setOpen(false)}
       />
-    </Container>
+    </BasicModal>
+
+    <DataTable title={!view && 'Plans'} columns={columns} data={plans} />
+  </Container>
+
   );
 };
 

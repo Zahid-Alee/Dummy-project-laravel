@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use App\Models\PlanUser;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use App\Models\Plan;
@@ -20,6 +21,7 @@ class SubscriptionController extends Controller
                     'id' => $plan->id,
                     'title' => $plan->title,
                     'price' => $plan->price,
+                    'description'=>$plan->description
                 ];
             });
 
@@ -39,7 +41,7 @@ class SubscriptionController extends Controller
     {
 
         $userid = $request->input('user_id');
-        $user= User::find($userid);
+        $user = User::find($userid);
         $planId = $request->input('plan_id');
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -65,14 +67,14 @@ class SubscriptionController extends Controller
         $sale->save();
 
         $user->plans()->detach($planId);
-        return response()->json(['succcess'=>true,'message'=>'accepted request']);
+        return response()->json(['succcess' => true, 'message' => 'accepted request']);
     }
 
     public function reject(Request $request)
     {
 
         $userid = $request->input('user_id');
-        $user= User::find($userid);
+        $user = User::find($userid);
         $planId = $request->input('plan_id');
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -97,30 +99,41 @@ class SubscriptionController extends Controller
         ]);
         $sale->save();
         $user->plans()->detach($planId);
-        return response()->json(['succcess'=>true,'message'=>'accepted request']);
+        return response()->json(['succcess' => true, 'message' => 'accepted request']);
     }
-    public function subscribe(Request $request, $planId)
+    public function subscribe(Request $request, $planId = false)
     {
         $user = $request->user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-
-        $plan = Plan::findOrFail($planId);
-        if (!$plan) {
-            return response()->json(['message' => 'Plan not found'], 404);
+        
+        $isRequest = $request->input('request');
+        if($isRequest){
+            $user_id = $user->id;
+            $description = $request->input('description');
+            PlanUser::create([
+                'user_id' => $user_id,
+                'description' => $description,
+            ]);
+    
+            return response()->json(['message' => 'User subscribed manually']);
         }
-        $user->plans()->attach($planId);
-
-        return response()->json(['message' => 'Subscribed successfully']);
+        if ($planId) {
+            $plan = Plan::find($planId);
+            if (!$plan) {
+                return response()->json(['message' => 'Plan not found'], 404);
+            }
+            $user->plans()->attach($planId);
+            return response()->json(['message' => 'Subscribed successfully']);
+        } else {
+           
+        }
     }
-
-
     public function deleteSubscription(Request $request, $planId)
     {
         $user = $request->user();
         $user->plans()->detach($planId);
-
         return response()->json(['message' => 'Subscription deleted successfully']);
     }
 

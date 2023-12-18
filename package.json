@@ -53,6 +53,8 @@
         "@iconify/react": "^4.1.1",
         "@material-tailwind/react": "^2.1.4",
         "@mui/lab": "^5.0.0-alpha.147",
+        "@stripe/react-stripe-js": "^2.4.0",
+        "@stripe/stripe-js": "^2.2.1",
         "apexcharts": "^3.41.0",
         "date-fns": "^2.30.0",
         "flowbite": "^2.2.0",
@@ -78,6 +80,7 @@
         "reactjs-popup": "^2.0.6",
         "simplebar-react": "^3.2.4",
         "sort-by": "^0.0.2",
+        "stripe": "^14.8.0",
         "styled-components": "^6.1.1"
     }
 }

@@ -6,6 +6,7 @@ import { getSubscriptions } from '@/Pages/Admin/_mock/user';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { Typography } from '@material-tailwind/react';
 
 export default function ProductsView() {
 
@@ -82,7 +83,7 @@ export default function ProductsView() {
     {
       name: 'Actions',
       cell: (row) => (
-        <div style={{display:'flex',gap:'10px'}}>
+        <div style={{ display: 'flex', gap: '10px' }}>
           <FaCheck
             style={{ cursor: 'pointer', marginRight: '8px' }}
             onClick={() => handleAccept(row.plan_id, row.user_id)}
@@ -129,9 +130,9 @@ export default function ProductsView() {
 
   };
 
-  const handleRemove =  async (row, user) => {
-  
-    if(!confirm('Do you want to delete users request')){
+  const handleRemove = async (row, user) => {
+
+    if (!confirm('Do you want to delete users request')) {
       return
     }
     const formData = {
@@ -150,21 +151,12 @@ export default function ProductsView() {
 
   return (
     <Container>
-      <Toaster />
-      <div>
-        <input
-          type="text"
-          placeholder="Search..."
-          onChange={handleFilter}
-          style={{ marginBottom: '1rem' }}
-        />
-      </div>
+
+      <Typography variant="h4">Requests</Typography>
       <DataTable
         columns={columns}
         data={data}
         onSelectedRowsChange={handleRowSelected}
-        pagination
-        paginationPerPage={5}
       />
     </Container>
   );

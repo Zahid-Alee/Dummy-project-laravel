@@ -16,6 +16,7 @@ class Plan extends Model
 
     protected $fillable = [
         'title',
+        'washing_point_id',
         'price',
     ];
 
@@ -28,6 +29,11 @@ class Plan extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'plan_user')->withTimestamps();
+    }
+    
+    public function washingPoint()
+    {
+        return $this->belongsTo(WashingPoint::class, 'washing_point_id');
     }
 
     public function notifications():HasMany{

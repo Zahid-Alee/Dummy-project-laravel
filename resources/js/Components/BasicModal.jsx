@@ -6,6 +6,7 @@ import Modal from '@mui/material/Modal';
 
 const style = {
   position: 'absolute',
+  width: '80%',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
@@ -14,6 +15,8 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  maxHeight: '80vh',
+  overflowY: 'auto',
 };
 
 export default function BasicModal({ open, close, children }) {

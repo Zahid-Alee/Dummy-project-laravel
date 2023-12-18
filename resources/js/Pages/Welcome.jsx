@@ -4,20 +4,18 @@ import TopBar from '../Components/TopBar';
 import { Link, Head } from '@inertiajs/react';
 import { Carousel, IconButton } from "@material-tailwind/react";
 import '../../css/app.css'
-// import Modal from '@/Components/Modal';
+
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { BlogView } from './Admin/sections/blog/view';
-import UsersBlogView from './Admin/sections/blog/view/user-blog-view';
-import UserPage from './Admin/pages/user';
+
 import UserBlogView from './Admin/sections/blog/view/user-blog-view';
-// import AuthenticatedLayout from '@/User/Layouts/AuthenticatedLayout';
-
-// import '../../img/'
-
+import UsersFeedback from '@/Components/Testimonals';
+import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
+import Services from '@/Components/Services';
+import ChoosePlan from '@/Components/ChoosePlan';
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
     const style = {
@@ -37,17 +35,50 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [selectedPlan, setSelectedPlan] = React.useState(null);
+    const [serviceData, setServiceData] = React.useState('');
+
+
+    React.useEffect(() => {
+
+        axios.get(`/get-all-data`).
+            then((re) => { setServiceData(re.data) }
+            )
+            .catch((e) => console.log(e))
+    }, [])
+
     const handleBookPlan = (plan) => {
         handleOpen();
         setSelectedPlan(plan.id);
     }
+
+
+    const handleReq = (e) => {
+
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        axios.post(`/feedbacks`, formData).
+
+            then((re) => { 
+                toast.success('Feedback Submitted') ;
+                window.location.reload();
+            
+            }
+            )
+            .catch((e) => console.log(e))
+    }
+
+
+
+
     return (
         <>
+
+            <Toaster />
             <Head title="Welcome" />
             <div className="">
                 <>
                     <TopBar />
-                    <div class="nav-bar">
+                    <div style={{ backgroundColor: 'black' }} class="nav-bar">
                         <div class="container">
                             <Navbar auth={auth} />
                         </div>
@@ -111,17 +142,17 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                         >
                             <img
-                                src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+                                src="https://img.freepik.com/free-photo/beautiful-car-washing-service_23-2149212191.jpg?w=826&t=st=1702579503~exp=1702580103~hmac=7c5f9481b15253adf1bc04a6e412258fce84dbab5753e71ad1eeb839b46cd791"
                                 alt="image 1"
                                 className="h-full w-full object-cover"
                             />
-                            <img
-                                src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
+                            <img style={{ objectFit: 'cover', width: '100%' }}
+                                src="https://img.freepik.com/free-photo/man-washing-his-car-garage_1157-26046.jpg?w=826&t=st=1702579345~exp=1702579945~hmac=b2cd0a2652b6c68631a529d3d02bc32ffb8430021b8422f2e9508766571cb2a8"
                                 alt="image 2"
                                 className="h-full w-full object-cover"
                             />
                             <img
-                                src="https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80"
+                                src="https://img.freepik.com/free-photo/car-wash-detailing-station_1303-22319.jpg?w=826&t=st=1702579416~exp=1702580016~hmac=acdbf51fd247ecb2a046a0ddd62f5d6e0d6362ca7dabdfbf03bedd88a93fad00"
                                 alt="image 3"
                                 className="h-full w-full object-cover"
                             />
@@ -134,7 +165,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 <div class="col-lg-6">
                                     <div class="about-img">
                                         <video controls loop autoplay height="280" width="550" >
-                                            <source src="video/Introcar_wash.mp4" type="video/mp4" />
+                                            <source src="./car_wash_-_3555 (360p).mp4" type="video/mp4" />
                                         </video>
 
                                     </div>
@@ -162,75 +193,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             </div>
                         </div>
                     </div>
-
-                    <div class="service">
-                        <div class="container">
-                            <div class="section-header text-center">
-                                <p>What We Do?</p>
-                                <h2>Premium Washing Services</h2>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="service-item">
-                                        <i class="flaticon-car-wash-1"></i>
-                                        <h3>Exterior Washing</h3>
-                                        <p>A car wash, carwash, or auto wash is a facility used to clean the exterior, and in some cases the interior of motor vehicles.</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="service-item">
-                                        <i class="flaticon-car-wash"></i>
-                                        <h3>Interior Washing</h3>
-                                        <p>The Car interior detailing, as the name implies, is the cleaning of vehicle interiors</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="service-item">
-                                        <i class="flaticon-vacuum-cleaner"></i>
-                                        <h3>Vacuum Cleaning</h3>
-                                        <p>Industrial vacuum cleaners for vehicle cleaning must therefore give consistent performance,<br />
-                                            good filtering capacity, and ensure there is enough airflow for it</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="service-item">
-                                        <i class="flaticon-seat"></i>
-                                        <h3>Seats Washing</h3>
-                                        <p>Cloth car seats are relatively easy to clean without damaging the material like vaccum,baking soda etc.</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="service-item">
-                                        <i class="flaticon-car-service"></i>
-                                        <h3>Window Wiping</h3>
-                                        <p>A windscreen wiper, windshield wiper, wiper blade , or simply wiper, is a device used to<br />
-                                            remove rain, snow, ice from a vehicle's front window.</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="service-item">
-                                        <i class="flaticon-car-service-2"></i>
-                                        <h3>Wet Cleaning</h3>
-                                        <p>Wet cleaning machines have controls that allow them to safely and efficiently clean a wide variety of garments in water.</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="service-item">
-                                        <i class="flaticon-car-wash"></i>
-                                        <h3>Oil Changing</h3>
-                                        <p>the process of removing old, dirty oil in a vehicle and replacing it with clean oil The car needs an oil change</p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="service-item">
-                                        <i class="flaticon-brush-1"></i>
-                                        <h3>Brake Reparing</h3>
-                                        <p>The one important job that your automobile’s brake system has is to help stop your vehicle. </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Services />
+                    <ChoosePlan />
 
                     <div class="facts" data-parallax="scroll" data-image-src="../../img/facts.jpg">
                         <div class="container">
@@ -239,7 +203,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     <div class="facts-item">
                                         <i class="fa fa-map-marker-alt"></i>
                                         <div class="facts-text">
-                                            <h3 data-toggle="counter-up">25</h3>
+                                            <h3 data-toggle="counter-up">{serviceData?.washing_points_count ?? 0}</h3>
                                             <p>Service Points</p>
                                         </div>
                                     </div>
@@ -248,8 +212,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     <div class="facts-item">
                                         <i class="fa fa-user"></i>
                                         <div class="facts-text">
-                                            <h3 data-toggle="counter-up">350</h3>
-                                            <p>Engineers & Workers</p>
+                                            <h3 data-toggle="counter-up">{serviceData?.users_count ?? 0}</h3>
+                                            <p>Trusted Users</p>
                                         </div>
                                     </div>
                                 </div>
@@ -257,8 +221,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     <div class="facts-item">
                                         <i class="fa fa-users"></i>
                                         <div class="facts-text">
-                                            <h3 data-toggle="counter-up">1500</h3>
-                                            <p>Happy Clients</p>
+                                            <h3 data-toggle="counter-up">{serviceData?.plans_count ?? 0}</h3>
+                                            <p>Pricing  Plans</p>
                                         </div>
                                     </div>
                                 </div>
@@ -266,25 +230,14 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     <div class="facts-item">
                                         <i class="fa fa-check"></i>
                                         <div class="facts-text">
-                                            <h3 data-toggle="counter-up">5000</h3>
-                                            <p>Projects Completed</p>
+                                            <h3 data-toggle="counter-up">{serviceData?.sold_plans_count ?? 0}</h3>
+                                            <p>Washing Completed</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="price">
-                        <div class="container">
-                            <div class="section-header text-center">
-                                <p>Washing Plan</p>
-                                <h2>Choose Your Plan</h2>
-                            </div>
-                            <UserBlogView view={true} />
-                        </div>
-                    </div>
-
                     <div>
                         <Modal
                             open={open}
@@ -302,7 +255,72 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             </Box>
                         </Modal>
                     </div>
-                    <Testimonial />
+                    <UsersFeedback />
+
+                    <div class="location">
+                        <div class="container">
+                            <div class="row">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="footer-contact">
+                                        <h2>Get In Touch</h2>
+                                        <p><i class="fa fa-map-marker-alt"></i>COMSATS</p>
+                                        <p><i class="fa fa-phone-alt"></i>+92 123456789</p>
+                                        <p><i class="fa fa-envelope"></i>fyp123.com</p>
+                                        <div class="footer-social">
+                                            <a class="btn" href=""><i class="fab fa-twitter"></i></a>
+                                            <a class="btn" href=""><i class="fab fa-facebook-f"></i></a>
+                                            <a class="btn" href=""><i class="fab fa-youtube"></i></a>
+                                            <a class="btn" href=""><i class="fab fa-instagram"></i></a>
+                                            <a class="btn" href=""><i class="fab fa-linkedin-in"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="footer-link">
+                                        <h2>Popular Links</h2>
+                                        <a href="">About Us</a>
+                                        <a href="">Contact Us</a>
+                                        <a href="">Our Service</a>
+                                        <a href="">Service Points</a>
+                                        <a href="">Pricing Plan</a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="footer-link">
+                                        <h2>Useful Links</h2>
+                                        <a href="">Terms of use</a>
+                                        <a href="">Privacy policy</a>
+                                        <a href="">Cookies</a>
+                                        <a href="">Help</a>
+                                        <a href="">FQAs</a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="footer-newsletter">
+                                        <h2>Submit Feedback</h2>
+                                        <form onSubmit={handleReq}>
+                                            <div>
+                                                <strong>Message</strong>
+
+                                            </div>
+                                            <input type='text' name='message'
+                                                required />
+                                            <button class="btn btn-custom">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </>
             </div>
 

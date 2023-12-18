@@ -46,8 +46,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware(['admin.role'])->group(function () {
         // Additional admin-specific routes under 'auth:sanctum'
-
-        Route::post('/subscribe/{planId}', [SubscriptionController::class, 'subscribe']);
         Route::delete('/unsubscribe/{planId}', [SubscriptionController::class, 'deleteSubscription']);
         Route::get('/show-subscriptions', [SubscriptionController::class, 'showSubscriptions']);
         Route::post('/accept-req', [SubscriptionController::class, 'accept']);
