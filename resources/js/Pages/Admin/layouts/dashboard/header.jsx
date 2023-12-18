@@ -28,16 +28,24 @@ export default function Header({ onOpenNav, role }) {
 
   const lgUp = useResponsive('up', 'lg');
 
+  const styles = {
+    position: 'fixed',
+    top: '10px',
+    right: '50%',
+    fontWeight: 'bold',
+    fontSize: "25px",
+    color:'white',
+    textTransform:"capitalize"
+  }
+
   const renderContent = (
     <>
 
-      {/* {!lgUp && (
-          <IconButton onClick={onOpenNav} sx={{ mr: 1 }}>
-            <Iconify icon="eva:menu-2-fill" />
-          </IconButton>
-        )} */}
-
       <Box sx={{ flexGrow: 1 }} />
+
+      <h1 style={styles}>
+        {role??'Admin'} Dashboard
+      </h1>
 
       <Stack direction="row" alignItems="center" spacing={1}>
         <Dropdown>

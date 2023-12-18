@@ -31,17 +31,21 @@ const Teachers = () => {
         const schoolId = schools && schools.length > 0 ? schools[0].id : null;
         const sectionId = sections && sections.length > 0 ? sections[0].id : null;
 
-        setselectedTeacher({ ...teacherData, classId, schoolId ,sectionId });
+        setselectedTeacher({ ...teacherData, classId, schoolId, sectionId });
     };
 
     useEffect(() => {
         loadteachers();
     }, []);
 
-    const notify = (message) => {
-        toast.success(message)
-    }
+    const notify = (message, type) => {
 
+        if (type == 'error') {
+            return toast.error(message)
+        }
+        toast.success(message);
+
+    };
 
     const loadteachers = async () => {
         try {

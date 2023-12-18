@@ -8,14 +8,21 @@
 /* @import 'simplebar-react/dist/simplebar.min.css'; */
 
 
-.grid-plans-container{
+.grid-plans-container {
 
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-gap: 20px;
 }
 
 .css-1os9ix1 {
 
-    width: 60% !important; 
+    width: 60% !important;
+}
+
+.charts h2 {
+
+    font-weight: bold;
+    font-size: 25px;
+    text-align: center;
 }

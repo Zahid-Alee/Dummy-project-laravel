@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, MenuItem, Select, TextField, FormControl, InputLabel } from '@mui/material';
+import * as yup from 'yup';
+
+const validationSchema = yup.object().shape({
+    name: yup.string().matches(/^[^\d].*$/, 'Name cannot start with a number').required('User Name is required'),
+    email: yup.string().email('Invalid email').required('User Email is required'),
+    school_id: yup.number().required('Select School'),
+    class_id: yup.number().required('Select Class'),
+    section_id: yup.number().required('Select Section'),
+});
 
 
 const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId, schoolId = null, class_id = null, sectionId }) => {
@@ -15,27 +24,9 @@ const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId,
     const [sections, setSections] = useState([]);
 
     useEffect(() => {
-
-        axios.get('/classes')
-            .then(response => {
-
-                setClasses(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching classes:', error);
-            });
-
         axios.get('/schools')
             .then(response => {
                 setSchools(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching districts:', error);
-            });
-
-        axios.get('/sections')
-            .then(response => {
-                setSections(response.data);
             })
             .catch(error => {
                 console.error('Error fetching districts:', error);
@@ -68,45 +59,49 @@ const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId,
 
 
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const userData = {
-            name: name,
-            email: email,
-            school_id: school_id,
-            class_id: teacherClass,
-            section_id,
-            password: password,
-            password_confirmation: password,
-            role: 'teacher'
-        };
 
+        try {
+            await validationSchema.validate({
+                name,
+                email,
+                school_id,
+                class_id: teacherClass,
+                section_id,
+            });
 
-        edit ?
-            axios.put(`/teachers/${editId}`, userData)
-                .then((res) => {
-                    onClose();
-                    updatedData();
-                    notify('User Updated')
-                })
-                .catch((e) => {
-                    console.log(e)
-                })
-            :
-            axios.post(`/users`, userData)
-                .then(async (res) => {
-                    userData.user_id = res?.data?.id;
-                    await axios.post('/teachers', userData)
-                        .then((res) => {
-                            notify('New Teacher Created');
-                            updatedData();
-                            onClose();
-                        })
-                })
-                .catch((e) => {
-                    notify(e.message)
-                })
+            const userData = {
+                name,
+                email,
+                school_id,
+                class_id: teacherClass,
+                section_id,
+                password: password,
+                password_confirmation: password,
+                role: 'teacher'
+            };
+
+            if (edit) {
+                await axios.put(`/teachers/${editId}`, userData);
+                onClose();
+                updatedData();
+                notify('User Updated');
+            } else {
+                const userResponse = await axios.post(`/users`, userData);
+                userData.user_id = userResponse?.data?.id;
+                await axios.post('/teachers', userData);
+                notify('New Teacher Created');
+                updatedData();
+                onClose();
+            }
+        } catch (error) {
+            console.error('Validation error:', error.errors);
+            notify(error.errors[0], 'error');
+        }
     };
+
+
 
     return (
         <form onSubmit={handleSubmit}>
@@ -147,23 +142,6 @@ const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId,
                 </Select>
             </FormControl>
             <FormControl fullWidth variant="outlined" margin="normal">
-                <InputLabel id="district-select-label">Select Section</InputLabel>
-                <Select
-                    label="Section ID"
-                    value={section_id}
-                    onChange={(e) => { setSectionId(e.target.value) }}
-                    variant="outlined"
-                    fullWidth
-                >
-                    {sections?.map(s => (
-                        <MenuItem key={s.id} value={s.id}>
-                            {s.name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <FormControl fullWidth variant="outlined" margin="normal">
                 <InputLabel id="district-select-label">Select Class</InputLabel>
                 <Select
                     label="Class ID"
@@ -175,6 +153,22 @@ const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId,
                     {classes?.map(cl => (
                         <MenuItem key={cl.id} value={cl.id}>
                             {cl.name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            <FormControl fullWidth variant="outlined" margin="normal">
+                <InputLabel id="district-select-label">Select Section</InputLabel>
+                <Select
+                    label="Section ID"
+                    value={section_id}
+                    onChange={(e) => { setSectionId(e.target.value) }}
+                    variant="outlined"
+                    fullWidth
+                >
+                    {sections?.map(s => (
+                        <MenuItem key={s.id} value={s.id}>
+                            {s.name}
                         </MenuItem>
                     ))}
                 </Select>

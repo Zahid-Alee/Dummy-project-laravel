@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, MenuItem, Select, TextField ,FormControl ,InputLabel } from '@mui/material';
+import { Button, MenuItem, Select, TextField, FormControl, InputLabel } from '@mui/material';
+import * as yup from 'yup';
+
+const validationSchema = yup.object().shape({
+    name: yup.string().matches(/^[^\d].*$/, 'Name cannot start with a number').required('User Name is required'),
+    email: yup.string().email('Invalid email').required('User Email is required'),
+    school_id: yup.number().required('Select School'),
+});
 
 
-const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, schoolId = null}) => {
-    const [name, setName] = useState();
-    const [email, setEmail] = useState();
+const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, schoolId = null }) => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [school_id, setschool_id] = useState(edit ? schoolId : null);
     const [schools, setSchools] = useState([]);
     const [classes, setClasses] = useState([]);
     const [password, setPassword] = useState('schooladmin');
+
+
 
     useEffect(() => {
 
@@ -35,43 +44,72 @@ const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, s
         setschool_id(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const userData = {
-            name: name,
-            email: email,
-            school_id: school_id,
-            password: password,
-            password_confirmation: password,
-            role: 'school_admin'
-        };
 
+        try {
+            await validationSchema.validate({
+                name,
+                email,
+                school_id,
+            });
 
-        edit ?
-            axios.put(`/admins/${editId}`, userData)
-                .then((res) => {
-                    onClose();
-                    updatedData();
-                    notify('User Updated')
-                })
-                .catch((e) => {
-                    console.log(e)
-                })
-            :
-            axios.post(`/users`, userData)
-                .then(async (res) => {
-                    userData.user_id = res?.data?.id;
-                    await axios.post('/admins', userData)
-                        .then((res) => {
-                            notify('New School Admin Created');
-                            updatedData();
-                            onClose();
-                        })
-                })
-                .catch((e) => {
-                    notify(e.message)
-                })
+            const userData = {
+                name,
+                email,
+                school_id,
+                password,
+                password_confirmation: password,
+                role: 'school_admin'
+            };
+
+            edit ?
+                axios.put(`/admins/${editId}`, userData)
+                    .then((res) => {
+                        onClose();
+                        updatedData();
+                        notify('User Updated')
+                    })
+                    .catch((e) => {
+                        console.log(e)
+                    })
+                :
+                axios.post(`/users`, userData)
+                    .then(async (res) => {
+                        userData.user_id = res?.data?.id;
+                        await axios.post('/admins', userData)
+                            .then((res) => {
+                                notify('New School Admin Created');
+                                updatedData();
+                                onClose();
+                            })
+                    })
+                    .catch((e) => {
+                        notify('error', e.message)
+                    })
+
+        } catch (error) {
+            console.error('Validation error:', error.errors);
+            notify('error',error.errors[0], );
+        }
     };
+
+
+    // const handleSubmit = (event) => {
+    //     event.preventDefault();
+    //     const userData = {
+    //         name: name,
+    //         email: email,
+    //         school_id: school_id,
+    //         password: password,
+    //         password_confirmation: password,
+    //         role: 'school_admin'
+    //     };
+
+
+
+    // };
 
     return (
         <form onSubmit={handleSubmit}>

@@ -1,41 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import toast, { Toaster } from 'react-hot-toast';
+import { Button, TextField } from '@mui/material';
+import toast from 'react-hot-toast';
+import * as yup from 'yup';
 
-const ClassFrom = ({ onClose, notify, updatedData, edit = false, editId, editName = '', editGrade = '', school_id }) => {
-  
+const validationSchema = yup.object().shape({
+  name: yup.string().required('Class Name is required'),
+  grade: yup.string().required('Grade is required'),
+});
+
+const ClassFrom = ({ onClose, notify, updatedData, edit = false, editId, editName = '', editGrade = '' }) => {
   const [name, setName] = useState(editName);
-  const [grade, setgrade] = useState(editGrade);
+  const [grade, setGrade] = useState(editGrade);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const schoolData = {
-      name: name,
-      grade: grade,
-    };
 
-    if (edit) {
-      return await axios.put(`/classes/${editId}`, schoolData)
-        .then(response => {
-          toast.success('Updated Class');
-          updatedData();
-          onClose();
-        })
-        .catch(error => {
-          console.error('Error updating school:', error);
-        });
-    }
-
-    await axios.post('/classes', schoolData)
-      .then(response => {
-        toast.success('Class created:', response.data);
-        updatedData();
-        onClose();
-      })
-      .catch(error => {
-        console.error('Error creating school:', error);
+    try {
+      await validationSchema.validate({
+        name,
+        grade,
       });
+
+      const classData = {
+        name,
+        grade,
+      };
+
+      if (edit) {
+        await axios.put(`/classes/${editId}`, classData);
+        toast.success('Updated Class');
+      } else {
+        const response = await axios.post('/classes', classData);
+        toast.success('Class created:', response.data);
+      }
+
+      updatedData();
+      onClose();
+    } catch (error) {
+      console.error('Validation error:', error.errors);
+      toast.error(error.errors[0]);
+    }
   };
 
   return (
@@ -49,30 +54,14 @@ const ClassFrom = ({ onClose, notify, updatedData, edit = false, editId, editNam
         fullWidth
       />
       <TextField
-        label="grade"
+        label="Grade"
         value={grade}
-        onChange={(e) => setgrade(e.target.value)}
+        onChange={(e) => setGrade(e.target.value)}
         variant="outlined"
         margin="normal"
         fullWidth
       />
-      {/* <FormControl fullWidth variant="outlined" margin="normal">
-        <InputLabel id="district-select-label">Select School</InputLabel>
-        <Select
-          labelId="district-select-label"
-          id="district-select"
-          value={selectedSchool}
-          onChange={(e) => setselectedSchool(e.target.value)}
-          label="Select School"
-        >
-          {schools?.map(school => (
-            <MenuItem key={school.id} value={school.id}>
-              {school.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl> */}
-      <Button onClick={handleSubmit} type="submit" variant="contained" color="primary">{edit ? 'Update Class' : 'Create Class'}</Button>
+      <Button type="submit" variant="contained" color="primary">{edit ? 'Update Class' : 'Create Class'}</Button>
     </form>
   );
 };

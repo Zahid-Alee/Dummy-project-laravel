@@ -108,11 +108,11 @@ const UserPage = () => {
       <Toaster />
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
-        <Button variant="contained"
+        {/* <Button variant="contained"
           onClick={() => { setOpen(true); setEdit(false) }}
           color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New User
-        </Button>
+        </Button> */}
       </Stack>
 
       <Card>

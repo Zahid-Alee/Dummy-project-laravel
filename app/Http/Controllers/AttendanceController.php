@@ -24,40 +24,39 @@ class AttendanceController extends Controller
             'attendanceData.*.attendances' => 'required|array',
             'attendanceData.*.attendances.*.date' => 'required|date_format:Y-m-d',
             'attendanceData.*.attendances.*.status' => 'required|string|in:Present,Absent',
-            'attendanceData.*.attendances.*.id' => 'required|exists:attendances,id',
-
+            'attendanceData.*.attendances.*.id' => 'nullable|exists:attendances,id',
         ]);
-
+    
         try {
             foreach ($attendanceData['attendanceData'] as $data) {
-
                 $studentId = $data['student_id'];
                 $sectionId = $data['section_id'];
-
+    
                 foreach ($data['attendances'] as $attendance) {
-
                     $date = $attendance['date'];
                     $status = $attendance['status'];
                     $recordId = $attendance['id'];
-
+    
                     Attendance::updateOrCreate(
-                        ['id' => $recordId,
+                        [
+                            'id' => $recordId,
                             'student_id' => $studentId,
                             'section_id' => $sectionId,
                             'date' => $date,
                         ],
-                        [
-                            'status' => $status,
-                        ]
+                        ['status' => $status]
                     );
                 }
             }
-
+    
             return response()->json(['message' => 'Attendance updated successfully']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to update attendance', 'error' => $e->getMessage()], 500);
         }
     }
+        
+
+    
 
 
 

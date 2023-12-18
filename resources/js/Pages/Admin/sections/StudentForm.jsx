@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, MenuItem, Select, TextField, FormControl, InputLabel } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import toast, { Toaster } from 'react-hot-toast';
+import * as yup from 'yup';
 
 const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selectedStudent }) => {
     const [name, setName] = useState(edit ? selectedStudent?.name : '');
@@ -41,34 +42,65 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
             });
     }, []);
 
-    const handleSubmit = (event) => {
+    const validationSchema = yup.object().shape({
+
+        name: yup.string()
+            .required('Name is required')
+            .matches(/^[^0-9]/, 'Name cannot start with a number'),
+        birthdate: yup.date()
+            .required('Birthdate is required')
+            .test('is-age-eligible', 'Child must be at least 3 years old', function (value) {
+                const today = new Date();
+                const childBirthdate = new Date(value);
+                const ageDiff = today.getFullYear() - childBirthdate.getFullYear();
+                const monthDiff = today.getMonth() - childBirthdate.getMonth();
+                const isAgeEligible = ageDiff > 3 || (ageDiff === 3 && monthDiff >= 0);
+                return isAgeEligible;
+            }),
+        parentName: yup.string()
+            .required("Parent's Name is required")
+            .matches(/^[^0-9]/, "Parent's Name cannot start with a number"),
+        address: yup.string().required('Address is required'),
+        classId: yup.string().required('Class is required'),
+        sectionId: yup.string().required('Section is required'),
+    });
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const studentData = {
-            name: name,
-            birthdate: birthdate,
-            parent_name: parentName,
-            address: address,
-            school_id: schoolId,
-            class_id: classId,
-            section_id: sectionId
-        };
 
-        edit ?
-            axios.put(`/students/${selectedStudent.id}`, studentData).then(() => {
+        try {
+            await validationSchema.validate({
+                name,
+                birthdate,
+                parentName,
+                address,
+                classId,
+                sectionId,
+            });
 
-                notify('Student details updated')
-            }).catch((res) => {
-            })
-            :
-            axios.post(`/students`, studentData).then((res) => {
+            const studentData = {
+                name,
+                birthdate,
+                parent_name: parentName,
+                address,
+                class_id: classId,
+                section_id: sectionId,
+            };
 
-                notify('Student  Created')
-            }).catch(() => {
+            if (edit) {
+                await axios.put(`/students/${selectedStudent.id}`, studentData);
+                notify('Student details updated');
+            } else {
+                await axios.post(`/students`, studentData);
+                notify('Student Created');
+            }
 
-            })
-
-        onClose();
-        updatedData();
+            updatedData();
+            onClose();
+        } catch (error) {
+            console.error('Validation error:', error.errors);
+            toast.error(error.errors[0]);
+        }
     };
 
     const handleClass = async (e) => {
@@ -94,7 +126,7 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                 required
             />
             <TextField
-                label=""
+                label="Birthdate"
                 value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
                 variant="outlined"
@@ -121,7 +153,6 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                 fullWidth
                 required
             />
-
             <FormControl fullWidth variant="outlined" margin="normal">
                 <InputLabel id="district-select-label">Select Class</InputLabel>
                 <Select

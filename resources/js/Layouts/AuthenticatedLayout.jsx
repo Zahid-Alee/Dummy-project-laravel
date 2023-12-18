@@ -33,6 +33,7 @@ export default function Authenticated({ user, header, children }) {
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
                                             <button
+                                            style={{color:'black'}}
                                                 type="button"
                                                 className="profile-btn inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium  text-white  hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                             >

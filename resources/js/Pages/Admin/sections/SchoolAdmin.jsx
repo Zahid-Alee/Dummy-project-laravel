@@ -35,9 +35,15 @@ const SchoolAdmin = () => {
         loadAdmins();
     }, []);
 
-    const notify = (message) => {
-        toast.success(message)
-    }
+    
+    const notify = (type, message) => {
+
+        if (type == 'error') {
+            return toast.error(message)
+        }
+        toast.success(message);
+
+    };
 
 
     const loadAdmins = async () => {

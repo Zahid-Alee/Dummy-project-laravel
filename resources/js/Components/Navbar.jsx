@@ -60,27 +60,11 @@ const Navbar = ({ auth }) => {
                         data-te-navbar-nav-ref>
                         <li class="lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                             {auth?.user && <a
-                                style={{ color: 'white' }}
+                                style={{ color: 'black' }}
                                 href={dashboard[role]}
                                 data-te-nav-link-ref
                             >Dashboard
                             </a>}
-                        </li>
-                        <li class=" lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                            <a
-                                class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                href="#"
-                                data-te-nav-link-ref
-                            >Team</a
-                            >
-                        </li>
-                        <li class=" lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                            <a
-                                class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                href="#"
-                                data-te-nav-link-ref
-                            >Projects</a
-                            >
                         </li>
                     </ul>
                 </div>
@@ -138,12 +122,12 @@ const Navbar = ({ auth }) => {
                                 Log in
                             </Link>
 
-                            <Link
+                            {/* <Link
                                 href={route('register')}
                                 className="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
                             >
                                 Register
-                            </Link>
+                            </Link> */}
                         </>
                     )}
                 </div>
