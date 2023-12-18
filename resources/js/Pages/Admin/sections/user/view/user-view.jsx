@@ -81,8 +81,11 @@ const UserPage = () => {
     },
   ];
 
-  const notify = (message) => {
+  const notify = (type, message) => {
 
+    if (type == 'error') {
+      return toast.error(message)
+    }
     toast.success(message);
 
   };

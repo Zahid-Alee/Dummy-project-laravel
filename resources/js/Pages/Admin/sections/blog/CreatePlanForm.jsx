@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, TextField } from '@mui/material';
 import toast, { Toaster } from 'react-hot-toast';
+import * as yup from 'yup';
+
+const validationSchema = yup.object().shape({
+  packageName: yup.string().required('Plan Name is required'),
+  price: yup.number().min(1, 'Price must be greater than 1').required('Price is required').nullable(),
+  selectedFeatures: yup.array().min(1, 'Select at least one feature').required('Features are required'),
+  selectedWashingPoint: yup.string().required('Select a Washing Point'),
+});
 
 const CreatePlanForm = ({
   onClose,
@@ -14,62 +22,70 @@ const CreatePlanForm = ({
   editFeatures = [],
   editPrice = 0,
   notify,
-  }) => {
- 
- 
+}) => {
   const [packageName, setPackageName] = useState(editTtile);
   const [selectedFeatures, setSelectedFeatures] = useState(editFeatures);
   const [price, setSelectedPrice] = useState(editPrice);
   const [selectedWashingPoint, setSelectedWashingPoint] = useState('');
 
-
-
   const handleFeatureChange = (event) => {
     setSelectedFeatures(event.target.value);
   };
+
   const handleWashingPointChange = (event) => {
     setSelectedWashingPoint(event.target.value);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const planData = {
-      title: packageName,
-      price: price,
-      feature_ids: selectedFeatures,
-      washing_point_id: selectedWashingPoint,
 
-    };
+    validationSchema.validate({
+      packageName,
+      price,
+      selectedFeatures,
+      selectedWashingPoint,
+    })
+      .then(() => {
+        const planData = {
+          title: packageName,
+          price: price,
+          feature_ids: selectedFeatures,
+          washing_point_id: selectedWashingPoint,
+        };
 
-    if (edit) {
-      return axios.put(`/plans/${editId}`, planData)
-        .then(response => {
-          toast.success('Updated Plan')
-          updatedData();
-          onClose();
-          notify('Updated Plan','success');
-        })
-        .catch(error => {
-          console.error('Error creating plan:', error);
-          notify('Error try again','error');
-
-        });
-    }
-
-    axios.post('/plans', planData)
-      .then(response => {
-        updatedData();
-        onClose();
-        notify('Updated Plan','success');
+        if (edit) {
+          axios.put(`/plans/${editId}`, planData)
+            .then(response => {
+              toast.success('Updated Plan');
+              updatedData();
+              onClose();
+              notify('Updated Plan', 'success');
+            })
+            .catch(error => {
+              console.error('Error updating plan:', error);
+              notify('Error updating plan', 'error');
+            });
+        } else {
+          axios.post('/plans', planData)
+            .then(response => {
+              updatedData();
+              onClose();
+              notify('Plan Created', 'success');
+            })
+            .catch(error => {
+              console.error('Error creating plan:', error);
+              notify('Error creating plan', 'error');
+            });
+        }
       })
-      .catch(error => {
-        console.error('Error updating plan:', error);
+      .catch((error) => {
+        console.error('Validation error:', error.errors);
+        notify(error.errors[0], 'error');
       });
-
   };
 
   return (
-    <form style={{display:'flex',flexFlow:"column", gap:'10px'}} onSubmit={handleSubmit}>
+    <form style={{ display: 'flex', flexFlow: "column", gap: '10px' }} onSubmit={handleSubmit}>
       <TextField
         label="Plan Name"
         value={packageName}
