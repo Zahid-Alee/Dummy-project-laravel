@@ -53,7 +53,6 @@ const SectionFrom = ({ onClose, class_id, updatedData, edit = false, editId, edi
 
     return (
         <form onSubmit={handleSubmit}>
-            {/* <Toaster /> */}
             <TextField
                 label="Section Name"
                 value={name}

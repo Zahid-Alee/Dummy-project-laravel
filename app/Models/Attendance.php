@@ -9,6 +9,8 @@ class Attendance extends Model
 {
     use HasFactory;
 
+
+    protected $fillable = ['section_id','student_id','date','status'];
     public function student()
     {
         return $this->belongsTo(Student::class);

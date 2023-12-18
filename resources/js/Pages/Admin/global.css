@@ -14,3 +14,8 @@
     grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
     grid-gap: 20px;
 }
+
+.css-1os9ix1 {
+
+    width: 60% !important; 
+}

@@ -2,6 +2,7 @@ import { Link } from '@inertiajs/react';
 import React, { useState } from 'react';
 import Dropdown from './Dropdown';
 import axios from 'axios';
+import { FaUser } from 'react-icons/fa';
 
 const Navbar = ({ auth }) => {
 
@@ -16,7 +17,7 @@ const Navbar = ({ auth }) => {
 
     return (
 
-        <nav style={{ background: "maroon" }}
+        <nav style={{ background: '#FF735C' }}
             class="flex-no-wrap relative flex w-full items-center justify-between  py-2 shadow-md shadow-black/5 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4">
             <div class="flex w-full flex-wrap items-center justify-between px-3">
                 <button
@@ -59,7 +60,7 @@ const Navbar = ({ auth }) => {
                         data-te-navbar-nav-ref>
                         <li class="lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                             {auth?.user && <a
-                                style={{color:'white'}}
+                                style={{ color: 'white' }}
                                 href={dashboard[role]}
                                 data-te-nav-link-ref
                             >Dashboard
@@ -93,8 +94,16 @@ const Navbar = ({ auth }) => {
                                         <button
                                             type="button"
                                             className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md-3 text-white dark:text-gray-400  hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                                            style={{ color: "White" }}
                                         >
-                                            {auth?.user?.name}
+                                            <FaUser />
+                                            <strong className='d-flex' style={{
+                                                color: "white",
+                                                justifyContent: 'center', alignItems: 'center', gap: '15px'
+                                            }}>
+                                                <FaUser size={25} />
+                                                {auth?.user?.name}
+                                            </strong>
 
                                             <svg
                                                 className="ms-2 -me-0.5 h-4 w-4"

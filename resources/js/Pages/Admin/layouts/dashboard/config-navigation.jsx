@@ -1,4 +1,10 @@
+import { FaChalkboardTeacher, FaSchool, FaUser, FaUserShield } from 'react-icons/fa';
 import SvgColor from '../../components/svg-color';
+import { MdDashboard , MdClass ,MdOutlineChairAlt } from "react-icons/md";
+import { PiStudentBold } from "react-icons/pi";
+import { GiTeacher } from "react-icons/gi";
+import { BsPencilSquare } from "react-icons/bs";
+
 
 // ----------------------------------------------------------------------
 
@@ -10,61 +16,62 @@ const navConfig = [
   {
     title: 'dashboard',
     path: 'dash',
-    icon: icon('ic_analytics'),
+    icon: <MdDashboard size={20} />,
     role:['admin']
   },
   {
-    title: 'user',
+    title: 'Users',
     path: 'user',
-    icon: icon('ic_user'),
+    icon: <FaUser size={20}/>,
     role:['admin']
 
   },
   {
     title: 'Class',
     path: 'classes',
-    icon: icon('ic_cart'),
+    icon: <FaChalkboardTeacher size={20}/>,
     role:['school_admin','teacher']
   },
   {
     title: 'Sections',
     path: 'sections',
-    icon: icon('ic_cart'),
+    icon: <MdOutlineChairAlt size={20}/>,
     role:['school_admin']
 
   },
   {
     title: 'School Admin',
     path: 'school-admin',
-    icon: icon('ic_cart'),
+    icon: <FaUserShield size={20}/>,
     role:['admin']
 
   },
   {
-    title: 'Students',
-    path: 'students',
-    icon: icon('ic_cart'),
+    title: 'Enrollments',
+    path: 'enrollments',
+    icon: <PiStudentBold size={20}/>
+    ,
     role:['admin','school_admin','teacher']
 
   },
   {
     title: 'Teachers',
     path: 'teachers',
-    icon: icon('ic_cart'),
+    icon: <GiTeacher size={20}/>,
     role:['admin']
 
   },
   {
     title: 'Schools',
     path: 'schools',
-    icon: icon('ic_blog'),
+    icon: <FaSchool size={20}/>,
     role:['admin']
 
   },
   {
     title: 'Attendance',
     path: 'attendance',
-    icon: icon('ic_blog'),
+    icon: <BsPencilSquare size={20}/>,
     role:['teacher']
 
   },

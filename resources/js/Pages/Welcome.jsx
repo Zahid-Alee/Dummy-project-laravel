@@ -4,25 +4,17 @@ import TopBar from '../Components/TopBar';
 import { Link, Head } from '@inertiajs/react';
 import { Carousel, IconButton } from "@material-tailwind/react";
 import '../../css/app.css'
-// import Modal from '@/Components/Modal';
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import { BlogView } from './Admin/sections/blog/view';
-import UsersBlogView from './Admin/sections/blog/view/user-blog-view';
-import UserPage from './Admin/pages/user';
-import UserBlogView from './Admin/sections/blog/view/user-blog-view';
-// import AuthenticatedLayout from '@/User/Layouts/AuthenticatedLayout';
 
-// import '../../img/'
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     return (
         <>
             <Head title="Welcome" />
             <Navbar auth={auth} />
+            <div className="bg-img">
+                <img style={{margin:'auto'}} src='https://img.freepik.com/free-vector/high-school-concept-illustration_114360-8329.jpg?w=826&t=st=1702728224~exp=1702728824~hmac=14a7fc40b16515d042862e34363f1c2c9e37ed2cf3fdc606f5104d206acb8aad' />
+            </div>
         </>
     );
 }

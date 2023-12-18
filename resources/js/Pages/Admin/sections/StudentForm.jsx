@@ -90,8 +90,8 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                 onChange={(e) => setName(e.target.value)}
                 variant="outlined"
                 margin="normal"
-
                 fullWidth
+                required
             />
             <TextField
                 label=""
@@ -101,6 +101,7 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                 margin="normal"
                 type='date'
                 fullWidth
+                required
             />
             <TextField
                 label="Parent's Name"
@@ -109,6 +110,7 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                 variant="outlined"
                 margin="normal"
                 fullWidth
+                required
             />
             <TextField
                 label="Address"
@@ -117,6 +119,7 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                 variant="outlined"
                 margin="normal"
                 fullWidth
+                required
             />
 
             <FormControl fullWidth variant="outlined" margin="normal">
@@ -127,6 +130,7 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                     onChange={handleClass}
                     variant="outlined"
                     fullWidth
+                    required
                 >
                     {classes.map(cl => (
                         <MenuItem key={cl.id} value={cl.id}>
@@ -144,6 +148,7 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                     onChange={(e) => setSectionId(e.target.value)}
                     variant="outlined"
                     fullWidth
+                    required
                 >
                     {sections.map(sec => (
                         <MenuItem key={sec.id} value={sec.id}>
@@ -153,7 +158,7 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                 </Select>
             </FormControl>
             <Button onClick={handleSubmit} type="submit" variant="contained" color="primary">
-                {edit ? 'Update Student' : 'Create Student'}
+                {edit ? 'Update Enrollment' : 'Create Enrollment'}
             </Button>
         </form>
     );

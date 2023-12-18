@@ -13,6 +13,13 @@ class StudentController extends Controller
 {
     // use App\Models\Student;
 
+
+
+    public function sections(Request $request, $id)
+    {
+        $students = Student::with('attendances', 'school', 'section', 'classModel')->where('section_id', $id)->get();
+        return response()->json($students);
+    }
     public function index(Request $request)
     {
 
@@ -22,27 +29,32 @@ class StudentController extends Controller
         if ($role === 'teacher') {
             $teacher = Teacher::where('user_id', $user->id)->first();
             if ($teacher) {
-                
+
                 $section_id = $teacher->section_id;
-                $students = Student::where('section_id', $section_id)->get();
+                $students = Student::with('school', 'section', 'classModel')->where('section_id', $section_id)->get();
+                return response()->json($students);
+
             }
 
         } elseif ($role === 'admin') {
             $students = Student::with('school', 'section', 'classModel')->get();
+            return response()->json($students);
         } elseif ($role === 'school_admin') {
             $schoolAdmin = SchoolAdmin::where('user_id', $user->id)->first();
-            if ($schoolAdmin) {
 
+            if ($schoolAdmin) {
                 $school_id = $schoolAdmin->school_id;
-                $students = Student::where('school_id', $school_id)->get();
+                $students = Student::with('school', 'section', 'classModel')->where('school_id', $school_id)->get();
+                return response()->json($students);
+
             }
 
         } else {
             $students = [];
         }
-
-        return response()->json($students);
     }
+
+
 
 
 

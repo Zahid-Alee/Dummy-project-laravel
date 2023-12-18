@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -35,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/students', [StudentController::class, 'index'])->name('user.getall');
     Route::get('/check_role/{id}', [userController::class, 'checkRole']);
     Route::get('/getclasses/{id}', [StudentClassController::class, 'getClasses']);
+    Route::get('/get-by-section/{id}', [StudentController::class, 'sections']);
     Route::get('/getsections/{id}', [SectionController::class, 'getSections']);
     Route::get('/classes/{id}', [StudentClassController::class, 'show']);
     Route::get('/schools/{id}', [SchoolController::class, 'show']);
@@ -110,10 +112,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['middleware' => 'school_admin'], function () {
 
-        Route::get('/school-admin', function () {
-            return Inertia::render('Admin/school_admin');
-        })->name('school.admin.dashboard');
-
         Route::post('/sections', [SectionController::class, 'store']);
         Route::put('/sections/{id}', [SectionController::class, 'update']);
         Route::delete('/sections/{id}', [SectionController::class, 'destroy']);
@@ -136,11 +134,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['middleware' => 'teacher'], function () {
 
-        Route::get('/attendance', 'AttendanceController@index');
-        Route::post('/attendance', 'AttendanceController@store');
-        Route::get('/attendance/{id}', 'AttendanceController@show');
-        Route::put('/attendance/{id}', 'AttendanceController@update');
-        Route::delete('/attendance/{id}', 'AttendanceController@destroy');
+        Route::get('/attendance', [AttendanceController::class,'index']);
+        Route::post('/attendance',[ AttendanceController::class,'store']);
+        Route::get('/attendance/{id}',[AttendanceController::class,'show']);
+        Route::put('/attendance/{id}', [AttendanceController::class,'update']);
+        Route::delete('/attendance/{id}', [AttendanceController::class,'destroy']);
     });
 
     Route::group(['middleware' => 'admin'], function () {

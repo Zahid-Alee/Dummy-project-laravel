@@ -6,6 +6,7 @@ import Modal from '@mui/material/Modal';
 
 const style = {
   position: 'absolute',
+  width: '80%',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
@@ -14,8 +15,8 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
-  maxHeight: '80vh', // Set maximum height to 80% of the viewport height
-  overflowY: 'auto', // Enable vertical scrolling
+  maxHeight: '80vh',
+  overflowY: 'auto',
 };
 
 export default function BasicModal({ open, close, children }) {
@@ -23,6 +24,7 @@ export default function BasicModal({ open, close, children }) {
   return (
     <div>
       <Modal
+        closeAfterTransition
         open={open}
         onClose={close}
         aria-labelledby="modal-modal-title"

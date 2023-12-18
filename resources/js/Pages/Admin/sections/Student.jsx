@@ -52,23 +52,23 @@ const Students = ({ canedit=false }) => {
   const columns = [
 
     {
-      name: 'Name',
+      name: 'Student Name',
       selector: 'name',
       sortable: true,
     },
     {
       name: 'Class',
-      selector: 'class_id',
+      selector: 'class_model.name',
       sortable: true,
     },
-    // {
-    //   name: 'Grade',
-    //   selector: 'class_model.grade',
-    //   sortable: true,
-    // },
+    {
+      name: 'Grade',
+      selector: 'class_model.grade',
+      sortable: true,
+    },
     {
       name: 'School',
-      selector: 'school_id',
+      selector: 'school.name',
       sortable: true,
     },
     {
@@ -115,9 +115,9 @@ const Students = ({ canedit=false }) => {
     <Container>
       <Toaster />
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Students</Typography>
+        <Typography variant="h4">Enrollment</Typography>
         {canedit&&<Button onClick={() => setOpen(true)} variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New Student
+          New Enrollment
         </Button>}
       </Stack>
 

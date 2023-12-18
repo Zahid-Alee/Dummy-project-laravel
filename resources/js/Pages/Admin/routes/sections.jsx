@@ -7,6 +7,7 @@ import Classes from '../sections/Class';
 import Teachers from '../sections/Teacher';
 import Students from '../sections/Student';
 import SchoolAdmin from '../sections/SchoolAdmin';
+import Attendance from '../sections/Attendance';
 
 export const IndexPage = lazy(() => import('../pages/app'));
 export const BlogPage = lazy(() => import('../pages/blog'));
@@ -28,7 +29,6 @@ export default function Router({role}) {
         </DashboardLayout>
       ),
       children: [
-        // { element: <IndexPage />, index: true },
         { path: '/dash', element: <IndexPage /> },
         { path: '/user', element: <UserPage /> },
         { path: '/products', element: <ProductsPage /> },
@@ -37,7 +37,8 @@ export default function Router({role}) {
         { path: '/school-admin', element: <SchoolAdmin/> },
         { path: '/classes', element: <Classes canedit={role=='school_admin'} /> },
         { path: '/teachers', element: <Teachers /> },
-        { path: '/students', element: <Students canedit={role=='school_admin'}  /> },
+        { path: '/enrollments', element: <Students canedit={role=='school_admin'}  /> },
+        { path: '/attendance', element: <Attendance canedit={role=='school_admin'}  /> },
       ],
     },
     // {

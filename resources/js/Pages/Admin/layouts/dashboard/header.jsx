@@ -19,6 +19,7 @@ import AccountPopover from './common/account-popover';
 import LanguagePopover from './common/language-popover';
 import NotificationsPopover from './common/notifications-popover';
 import Dropdown from '@/Components/Dropdown';
+import { FaUser } from 'react-icons/fa';
 
 // ----------------------------------------------------------------------
 
@@ -29,11 +30,12 @@ export default function Header({ onOpenNav, role }) {
 
   const renderContent = (
     <>
-      {!lgUp && (
-        <IconButton onClick={onOpenNav} sx={{ mr: 1 }}>
-          <Iconify icon="eva:menu-2-fill" />
-        </IconButton>
-      )}
+
+      {/* {!lgUp && (
+          <IconButton onClick={onOpenNav} sx={{ mr: 1 }}>
+            <Iconify icon="eva:menu-2-fill" />
+          </IconButton>
+        )} */}
 
       <Box sx={{ flexGrow: 1 }} />
 
@@ -45,8 +47,10 @@ export default function Header({ onOpenNav, role }) {
                 type="button"
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md-3 text-white dark:text-gray-400  hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
               >
-                <strong style={{color:"black"}}>
-                  {role}
+                <strong style={{ color: "white" }}>
+                  <span style={{ gap: "10px" }} className="flex">
+                    <FaUser />
+                  </span>
                 </strong>
                 <svg
                   className="ms-2 -me-0.5 h-4 w-4"
@@ -75,32 +79,38 @@ export default function Header({ onOpenNav, role }) {
   );
 
   return (
-    <AppBar
-      sx={{
-        boxShadow: 'none',
-        height: HEADER.H_MOBILE,
-        zIndex: theme.zIndex.appBar + 1,
-        ...bgBlur({
-          color: theme.palette.background.default,
-        }),
-        transition: theme.transitions.create(['height'], {
-          duration: theme.transitions.duration.shorter,
-        }),
-        ...(lgUp && {
-          width: `calc(100% - ${NAV.WIDTH + 1}px)`,
-          height: HEADER.H_DESKTOP,
-        }),
-      }}
-    >
-      <Toolbar
+
+    <>
+      <AppBar
         sx={{
-          height: 1,
-          px: { lg: 5 },
+          boxShadow: 'none',
+          height: HEADER.H_MOBILE,
+          zIndex: theme.zIndex.appBar + 1,
+          ...bgBlur({
+            color: theme.palette.background.default,
+          }),
+          transition: theme.transitions.create(['height'], {
+            duration: theme.transitions.duration.shorter,
+          }),
+          ...(lgUp && {
+            width: `calc(100% - ${NAV.WIDTH + 1}px)`,
+            height: HEADER.H_DESKTOP,
+          }),
         }}
       >
-        {renderContent}
-      </Toolbar>
-    </AppBar>
+
+        <Toolbar
+          sx={{
+            height: 1,
+            px: { lg: 5 },
+          }}
+        >
+
+          {renderContent}
+        </Toolbar>
+      </AppBar>
+    </>
+
   );
 }
 
