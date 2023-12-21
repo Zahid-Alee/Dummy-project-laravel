@@ -21,13 +21,17 @@ import { getUsersList } from '@/Pages/Admin/_mock/user';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaChalkboardTeacher, FaSchool, FaUser, FaUserShield } from 'react-icons/fa';
+import { PiStudentBold } from 'react-icons/pi';
+import ChartComponent from './Charts';
 
 // ----------------------------------------------------------------------
 
 export default function AppView() {
 
   const [users, setUsers] = useState([])
-  const [schools, setSchools] = useState([])
+  const [schoolData, setSchoolData] = useState({});
+  const [schools, setSchools] = useState([]);
+  const isAdmin = window.location.pathname.split('/')[1] === 'admin';
 
   useEffect(() => {
 
@@ -37,6 +41,8 @@ export default function AppView() {
 
     axios.get('/schools')
       .then((res) => setSchools(res.data)).catch((e) => console.log(e))
+    axios.get('/get-dash-data')
+      .then((res) => setSchoolData(res.data)).catch((e) => console.log(e))
 
   }, [])
   return (
@@ -46,10 +52,30 @@ export default function AppView() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid xs={12} sm={6} md={3}>
+
+
+        {isAdmin && <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Users"
             total={users?.length}
+            color="success"
+            icon={<FaUser size={30} />}
+          />
+        </Grid>}
+        <Grid xs={12} sm={6} md={3}>
+          <AppWidgetSummary
+            title="Classes"
+            total={schoolData?.classes_count}
+            color="success"
+            icon={<FaChalkboardTeacher size={30} />}
+          />
+        </Grid>
+
+
+        <Grid xs={12} sm={6} md={3}>
+          <AppWidgetSummary
+            title="Teachers"
+            total={schoolData?.teachers_count}
             color="success"
             icon={<FaUser size={30} />}
           />
@@ -57,32 +83,23 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Schools"
-            total={schools?.length}
+            title="Students"
+            total={schoolData?.students_count}
             color="info"
-            icon={<FaSchool size={30} />}
+            icon={<PiStudentBold size={30} />}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="Teachers"
-            total={2}
-            color="warning"
-            icon={<FaChalkboardTeacher size={30} />}
-          />
-        </Grid>
-
-        <Grid xs={12} sm={6} md={3}>
+        {isAdmin && <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="School Admins"
             total={4}
             color="error"
             icon={<FaUserShield size={30} />}
           />
-        </Grid>
+        </Grid>}
 
-        <div style={{flexFlow:'column',gap:"20px"}} className="charts flex">
+        {isAdmin && <div style={{ flexFlow: 'column', gap: "20px" }} className="charts flex">
           <Grid xs={12} md={6} lg={8}>
             <UserCharts />
           </Grid>
@@ -90,9 +107,11 @@ export default function AppView() {
           <Grid xs={12} md={6} lg={4}>
             <SalesChart />
           </Grid>
-        </div>
+        </div>}
 
-      </Grid>
+        {
+          !isAdmin && <ChartComponent />
+        }      </Grid>
     </Container>
   );
 }

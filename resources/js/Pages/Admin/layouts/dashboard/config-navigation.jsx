@@ -17,7 +17,7 @@ const navConfig = [
     title: 'dashboard',
     path: 'dash',
     icon: <MdDashboard size={20} />,
-    role:['admin']
+    role:['admin','school_admin']
   },
   {
     title: 'Users',

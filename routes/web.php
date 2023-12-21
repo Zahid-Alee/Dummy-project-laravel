@@ -42,7 +42,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/schools/{id}', [SchoolController::class, 'show']);
     Route::get('/sections/{id}', [SectionController::class, 'show']);
     Route::get('/students/{id}', [StudentController::class, 'show'])->name('user.show');
-
+    Route::get('/get-dash-data',[SchoolAdminController::class,'getDash']);
+    Route::get('/school-charts',[SchoolAdminController::class,'chartsData']);
 
 
 

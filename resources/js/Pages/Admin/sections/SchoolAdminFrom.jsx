@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, MenuItem, Select, TextField, FormControl, InputLabel } from '@mui/material';
+import { Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import * as yup from 'yup';
 
 const validationSchema = yup.object().shape({
@@ -9,16 +9,16 @@ const validationSchema = yup.object().shape({
     school_id: yup.number().required('Select School'),
 });
 
-
 const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, schoolId = null }) => {
     const [name, setName] = useState('');
+    const [nameError, setNameError] = useState('');
     const [email, setEmail] = useState('');
-    const [school_id, setschool_id] = useState(edit ? schoolId : null);
+    const [emailError, setEmailError] = useState('');
+    const [school_id, setSchool_id] = useState(edit ? schoolId : null);
+    const [schoolError, setSchoolError] = useState('');
     const [schools, setSchools] = useState([]);
     const [classes, setClasses] = useState([]);
     const [password, setPassword] = useState('schooladmin');
-
-
 
     useEffect(() => {
 
@@ -39,9 +39,41 @@ const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, s
             });
     }, []);
 
+    const handleNameChange = (event) => {
+        setName(event.target.value);
+        validateField('name', event.target.value);
+    };
+
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value);
+        validateField('email', event.target.value);
+    };
 
     const handleRoleChange = (event) => {
-        setschool_id(event.target.value);
+        setSchool_id(event.target.value);
+        validateField('school_id', event.target.value);
+    };
+
+
+    const validateField = async (fieldName, value) => {
+        try {
+            await validationSchema.validateAt(fieldName, { [fieldName]: value });
+            if (fieldName === 'name') {
+                setNameError('');
+            } else if (fieldName === 'email') {
+                setEmailError('');
+            } else if (fieldName === 'school_id') {
+                setSchoolError('');
+            }
+        } catch (error) {
+            if (fieldName === 'name') {
+                setNameError(error.message);
+            } else if (fieldName === 'email') {
+                setEmailError(error.message);
+            } else if (fieldName === 'school_id') {
+                setSchoolError(error.message);
+            }
+        }
     };
 
 
@@ -91,25 +123,9 @@ const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, s
 
         } catch (error) {
             console.error('Validation error:', error.errors);
-            notify('error',error.errors[0], );
+            notify('error', error.errors[0],);
         }
     };
-
-
-    // const handleSubmit = (event) => {
-    //     event.preventDefault();
-    //     const userData = {
-    //         name: name,
-    //         email: email,
-    //         school_id: school_id,
-    //         password: password,
-    //         password_confirmation: password,
-    //         role: 'school_admin'
-    //     };
-
-
-
-    // };
 
     return (
         <form onSubmit={handleSubmit}>
@@ -118,22 +134,25 @@ const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, s
                 <TextField
                     label="User Name"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={handleNameChange}
                     variant="outlined"
                     margin="normal"
                     fullWidth
                 />
+                {nameError && <FormHelperText error>{nameError}</FormHelperText>}
+
                 <TextField
                     label="User Email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     variant="outlined"
                     margin="normal"
                     fullWidth
                 />
+                {emailError && <FormHelperText error>{emailError}</FormHelperText>}
             </>}
 
-            <FormControl fullWidth variant="outlined" margin="normal">
+            <FormControl fullWidth variant="outlined" margin="normal" error={!!schoolError}>
                 <InputLabel id="district-select-label">Select School</InputLabel>
                 <Select
                     label="Role ID"
@@ -148,7 +167,9 @@ const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, s
                         </MenuItem>
                     ))}
                 </Select>
+                {schoolError && <FormHelperText>{schoolError}</FormHelperText>}
             </FormControl>
+
             <Button onClick={handleSubmit} type="submit" variant="contained" color="primary">
                 {edit ? 'Update Admin' : 'Create Admin'}
             </Button>

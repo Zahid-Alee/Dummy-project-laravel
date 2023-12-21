@@ -33,6 +33,9 @@ export default function BasicModal({ open, close, children }) {
         <Box sx={style}>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             {children}
+            <div className='cancel-btn' onClick={close}>
+              cancell
+            </div>
           </Typography>
         </Box>
       </Modal>

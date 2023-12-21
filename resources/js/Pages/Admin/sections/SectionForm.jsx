@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import * as yup from 'yup';
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required('Section Name is required'),
-  capacity: yup.number().typeError('Capacity must be a number').positive('Capacity must be a positive number').required('Capacity is required'),
+  name: yup
+    .string()
+    .required('Section Name is required')
+    .matches(/^[^0-9][A-Za-z0-9]*$/, 'Section Name must not start with a number and contain only letters and numbers'),
+  capacity: yup
+    .number()
+    .typeError('Capacity must be a number')
+    .positive('Capacity must be a positive number')
+    .required('Capacity is required'),
   class_id: yup.string().required('Class is required'),
 });
 
@@ -15,6 +22,7 @@ const SectionFrom = ({ onClose, class_id, updatedData, edit = false, editId, edi
   const [capacity, setCapacity] = useState(editCapacity);
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState(class_id);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     axios.get('/classes')
@@ -25,6 +33,15 @@ const SectionFrom = ({ onClose, class_id, updatedData, edit = false, editId, edi
         console.error('Error fetching districts:', error);
       });
   }, []);
+
+  const validateField = async (fieldName, value) => {
+    try {
+      await yup.reach(validationSchema, fieldName).validate(value);
+      setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: '' }));
+    } catch (error) {
+      setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: error.message }));
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -63,18 +80,28 @@ const SectionFrom = ({ onClose, class_id, updatedData, edit = false, editId, edi
       <TextField
         label="Section Name"
         value={name}
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => {
+          setName(e.target.value);
+          validateField('name', e.target.value);
+        }}
         variant="outlined"
         margin="normal"
         fullWidth
+        error={!!errors.name}
+        helperText={errors.name}
       />
       <TextField
         label="Capacity"
         value={capacity}
-        onChange={(e) => setCapacity(e.target.value)}
+        onChange={(e) => {
+          setCapacity(e.target.value);
+          validateField('capacity', e.target.value);
+        }}
         variant="outlined"
         margin="normal"
         fullWidth
+        error={!!errors.capacity}
+        helperText={errors.capacity}
       />
       <FormControl fullWidth variant="outlined" margin="normal">
         <InputLabel id="district-select-label">Select Class</InputLabel>
@@ -82,7 +109,10 @@ const SectionFrom = ({ onClose, class_id, updatedData, edit = false, editId, edi
           labelId="district-select-label"
           id="district-select"
           value={selectedClass}
-          onChange={(e) => setSelectedClass(e.target.value)}
+          onChange={(e) => {
+            setSelectedClass(e.target.value);
+            validateField('class_id', e.target.value);
+          }}
           label="Select School"
         >
           {classes?.map(cl => (
@@ -92,7 +122,9 @@ const SectionFrom = ({ onClose, class_id, updatedData, edit = false, editId, edi
           ))}
         </Select>
       </FormControl>
-      <Button type="submit" variant="contained" color="primary">{edit ? 'Update Class' : 'Create Class'}</Button>
+      <Button type="submit" variant="contained" color="primary">
+        {edit ? 'Update Class' : 'Create Class'}
+      </Button>
     </form>
   );
 };

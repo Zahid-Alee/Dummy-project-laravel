@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import * as yup from 'yup';
 
 const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selectedStudent }) => {
@@ -15,8 +15,10 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
     const [schools, setSchools] = useState([]);
     const [classes, setClasses] = useState([]);
     const [sections, setSections] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
+        // Fetch classes, schools, and sections data
         axios.get('/classes')
             .then(response => {
                 setClasses(response.data);
@@ -43,24 +45,26 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
     }, []);
 
     const validationSchema = yup.object().shape({
-
-        name: yup.string()
+        name: yup
+            .string()
             .required('Name is required')
-            .matches(/^[^0-9]/, 'Name cannot start with a number'),
-        birthdate: yup.date()
-            .required('Birthdate is required')
-            .test('is-age-eligible', 'Child must be at least 3 years old', function (value) {
-                const today = new Date();
-                const childBirthdate = new Date(value);
-                const ageDiff = today.getFullYear() - childBirthdate.getFullYear();
-                const monthDiff = today.getMonth() - childBirthdate.getMonth();
-                const isAgeEligible = ageDiff > 3 || (ageDiff === 3 && monthDiff >= 0);
-                return isAgeEligible;
-            }),
-        parentName: yup.string()
+            .matches(/^[^0-9][A-Za-z0-9\s]*$/, 'Name cannot start with a number and contain only letters, numbers, or spaces'),
+        birthdate: yup.date().required('Birthdate is required').test('is-age-eligible', 'Child must be at least 3 years old', function (value) {
+            const today = new Date();
+            const childBirthdate = new Date(value);
+            const ageDiff = today.getFullYear() - childBirthdate.getFullYear();
+            const monthDiff = today.getMonth() - childBirthdate.getMonth();
+            const isAgeEligible = ageDiff > 3 || (ageDiff === 3 && monthDiff >= 0);
+            return isAgeEligible;
+        }),
+        parentName: yup
+            .string()
             .required("Parent's Name is required")
-            .matches(/^[^0-9]/, "Parent's Name cannot start with a number"),
-        address: yup.string().required('Address is required'),
+            .matches(/^[^0-9][A-Za-z\s]*$/, "Parent's Name cannot start with a number and contain only letters or spaces"),
+        address: yup
+            .string()
+            .required('Address is required')
+            .matches(/^[^0-9][A-Za-z0-9\s]*$/, 'Address cannot start with a number and contain only letters, numbers, or spaces'),
         classId: yup.string().required('Class is required'),
         sectionId: yup.string().required('Section is required'),
     });
@@ -94,7 +98,6 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                 await axios.post(`/students`, studentData);
                 notify('Student Created');
             }
-
             updatedData();
             onClose();
         } catch (error) {
@@ -113,17 +116,32 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
         }
     };
 
-    return (
+    const handleNameChange = (value) => {
+        setName(value);
+        validateField('name', value);
+    };
 
+    const validateField = async (fieldName, value) => {
+        try {
+            await yup.reach(validationSchema, fieldName).validate(value);
+            setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: '' }));
+        } catch (error) {
+            setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: error.message }));
+        }
+    };
+
+    return (
         <form onSubmit={handleSubmit}>
             <TextField
                 label="Name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => handleNameChange(e.target.value)}
                 variant="outlined"
                 margin="normal"
                 fullWidth
                 required
+                error={!!errors.name}
+                helperText={errors.name || ''}
             />
             <TextField
                 label="Birthdate"
@@ -188,7 +206,7 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
                     ))}
                 </Select>
             </FormControl>
-            <Button onClick={handleSubmit} type="submit" variant="contained" color="primary">
+            <Button type="submit" variant="contained" color="primary">
                 {edit ? 'Update Enrollment' : 'Create Enrollment'}
             </Button>
         </form>
