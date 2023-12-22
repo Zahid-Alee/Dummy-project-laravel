@@ -4,7 +4,9 @@ import { Button, MenuItem, Select, TextField, FormControl, InputLabel } from '@m
 import * as yup from 'yup';
 
 const validationSchema = yup.object().shape({
-    name: yup.string().matches(/^[^\d].*$/, 'Name cannot start with a number').required('User Name is required'),
+    name: yup.string()
+        .matches(/^[a-zA-Z\s]*$/, 'Teacher can only contain letters and spaces')
+        .required('Teacher Name is required'),
     email: yup.string().email('Invalid email').required('User Email is required'),
     school_id: yup.number().required('Select School'),
     class_id: yup.number().required('Select Class'),
@@ -13,8 +15,10 @@ const validationSchema = yup.object().shape({
 
 
 const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId, schoolId = null, class_id = null, sectionId }) => {
-    const [name, setName] = useState();
-    const [email, setEmail] = useState();
+    const [name, setName] = useState('');
+    const [nameError, setNameError] = useState('');
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [school_id, setschool_id] = useState(edit ? schoolId : null);
     const [teacherClass, setClassId] = useState(edit ? class_id : null);
     const [schools, setSchools] = useState([]);
@@ -57,20 +61,54 @@ const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId,
         }
     };
 
+    const handleNameChange = (event) => {
+        const { value } = event.target;
+        setName(value);
+        validateField('name', value);
+    };
+
+
+    const handleEmailChange = (event) => {
+        const { value } = event.target;
+        setEmail(value);
+        validateField('email', value);
+    };
+
+
+    
+    const validateField = async (fieldName, value) => {
+        try {
+            await validationSchema.validateAt(fieldName, { [fieldName]: value });
+            if (fieldName === 'name') {
+                setNameError('');
+            } else if (fieldName === 'email') {
+                setEmailError('');
+            } else if (fieldName === 'school_id') {
+                setSchoolError('');
+            }
+        } catch (error) {
+            if (fieldName === 'name') {
+                setNameError(error.message);
+            } else if (fieldName === 'email') {
+                setEmailError(error.message);
+            } else if (fieldName === 'school_id') {
+                setSchoolError(error.message);
+            }
+        }
+    };
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            await validationSchema.validate({
+            validationSchema.validateSync({
                 name,
                 email,
                 school_id,
                 class_id: teacherClass,
                 section_id,
             });
-
             const userData = {
                 name,
                 email,
@@ -96,6 +134,12 @@ const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId,
                 onClose();
             }
         } catch (error) {
+            if (error.path === 'name') {
+                setNameError(error.message);
+            } else if (error.path === 'email') {
+                setEmailError(error.message);
+            }
+
             console.error('Validation error:', error.errors);
             notify(error.errors[0], 'error');
         }
@@ -108,21 +152,25 @@ const CreateTeacherForm = ({ onClose, notify, updatedData, edit = false, editId,
 
             {!edit && <>
                 <TextField
-                    label="User Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-                <TextField
-                    label="User Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
+                label="Full Name"
+                value={name}
+                onChange={handleNameChange}
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                error={!!nameError}
+                helperText={nameError}
+            />
+               <TextField
+                label="User Email"
+                value={email}
+                onChange={handleEmailChange}
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                error={!!emailError}
+                helperText={emailError}
+            />
             </>}
 
             <FormControl fullWidth variant="outlined" margin="normal">

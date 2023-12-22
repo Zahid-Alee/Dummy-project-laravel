@@ -4,10 +4,14 @@ import { Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelpe
 import * as yup from 'yup';
 
 const validationSchema = yup.object().shape({
-    name: yup.string().matches(/^[^\d].*$/, 'Name cannot start with a number').required('User Name is required'),
+    name: yup.string()
+        .matches(/^[a-zA-Z\s]*$/, 'Name can only contain letters and spaces')
+        .required('User Name is required'),
     email: yup.string().email('Invalid email').required('User Email is required'),
     school_id: yup.number().required('Select School'),
 });
+
+
 
 const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, schoolId = null }) => {
     const [name, setName] = useState('');
@@ -132,7 +136,7 @@ const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, s
 
             {!edit && <>
                 <TextField
-                    label="User Name"
+                    label="Full Name"
                     value={name}
                     onChange={handleNameChange}
                     variant="outlined"
@@ -142,7 +146,7 @@ const SchoolAdminForm = ({ onClose, notify, updatedData, edit = false, editId, s
                 {nameError && <FormHelperText error>{nameError}</FormHelperText>}
 
                 <TextField
-                    label="User Email"
+                    label="Email"
                     value={email}
                     onChange={handleEmailChange}
                     variant="outlined"

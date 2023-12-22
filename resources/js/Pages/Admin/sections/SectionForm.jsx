@@ -7,8 +7,8 @@ import * as yup from 'yup';
 const validationSchema = yup.object().shape({
   name: yup
     .string()
-    .required('Section Name is required')
-    .matches(/^[^0-9][A-Za-z0-9]*$/, 'Section Name must not start with a number and contain only letters and numbers'),
+    .required('Class Name is required')
+    .matches(/^[A-Za-z0-9\s]*$/, 'Class Name can only contain letters, numbers, or spaces'),
   capacity: yup
     .number()
     .typeError('Capacity must be a number')

@@ -8,9 +8,15 @@ const validationSchema = yup.object().shape({
   name: yup
     .string()
     .required('Class Name is required')
-    .matches(/^[^0-9\s][A-Za-z0-9\s]*$/, 'Class Name must not start with a number and contain only letters, numbers, or spaces'),
-  grade: yup.number().required('Grade is required').integer('Grade must be an integer'),
+    .matches(/^[A-Za-z0-9\s]*$/, 'Class Name can only contain letters, numbers, or spaces'),
+  grade: yup
+    .number()
+    .required('Grade is required')
+    .integer('Grade must be an integer')
+    .positive('Grade must be a positive number'), 
 });
+
+
 
 const ClassFrom = ({ onClose, updatedData, edit = false, editId, editName = '', editGrade = 0 }) => {
   const [name, setName] = useState(editName);
@@ -34,7 +40,7 @@ const ClassFrom = ({ onClose, updatedData, edit = false, editId, editName = '', 
 
   const handleGradeChange = (e) => {
     const { value } = e.target;
-    const intValue = parseInt(value, 10); // Ensure it's parsed as an integer
+    const intValue = parseInt(value, 10); 
     setGrade(intValue);
     validateField('grade', intValue);
   };
@@ -83,7 +89,7 @@ const ClassFrom = ({ onClose, updatedData, edit = false, editId, editName = '', 
       />
       <TextField
         label="Grade"
-        value={grade === 0 ? '' : String(grade)} // Handle 0 value as an empty string for better user experience
+        value={grade === 0 ? '' : String(grade)} 
         onChange={handleGradeChange}
         variant="outlined"
         margin="normal"
@@ -91,7 +97,7 @@ const ClassFrom = ({ onClose, updatedData, edit = false, editId, editName = '', 
         type="number"
         error={!!errors.grade}
         helperText={errors.grade}
-        inputProps={{ min: 0 }} // Assuming grade can't be negative
+        inputProps={{ min: 0 }} 
       />
       <Button type="submit" variant="contained" color="primary">
         {edit ? 'Update Class' : 'Create Class'}

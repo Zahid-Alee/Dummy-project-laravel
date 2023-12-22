@@ -47,8 +47,9 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
     const validationSchema = yup.object().shape({
         name: yup
             .string()
-            .required('Name is required')
-            .matches(/^[^0-9][A-Za-z0-9\s]*$/, 'Name cannot start with a number and contain only letters, numbers, or spaces'),
+            .required("Student's Name is required")
+            .matches(/^[A-Za-z][A-Za-z\s]*$/, "Student's Name can only start with a letter and contain letters or spaces"),
+
         birthdate: yup.date().required('Birthdate is required').test('is-age-eligible', 'Child must be at least 3 years old', function (value) {
             const today = new Date();
             const childBirthdate = new Date(value);
@@ -60,7 +61,8 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
         parentName: yup
             .string()
             .required("Parent's Name is required")
-            .matches(/^[^0-9][A-Za-z\s]*$/, "Parent's Name cannot start with a number and contain only letters or spaces"),
+            .matches(/^[A-Za-z][A-Za-z\s]*$/, "Parent's Name can only start with a letter and contain letters or spaces"),
+
         address: yup
             .string()
             .required('Address is required')
@@ -156,12 +158,18 @@ const CreateStudentForm = ({ onClose, notify, updatedData, edit = false, selecte
             <TextField
                 label="Parent's Name"
                 value={parentName}
-                onChange={(e) => setParentName(e.target.value)}
+                onChange={(e) => {
+                    setParentName(e.target.value);
+                    validateField('parentName', e.target.value); 
+                }}
                 variant="outlined"
                 margin="normal"
                 fullWidth
+                error={!!errors.parentName}
+                helperText={errors.parentName || ''}
                 required
             />
+
             <TextField
                 label="Address"
                 value={address}

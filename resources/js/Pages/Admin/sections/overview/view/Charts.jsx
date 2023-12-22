@@ -23,7 +23,6 @@ const ChartComponent = () => {
 
   return (
     <div>
-      <h2>Bar Chart: Classes Created</h2>
       <Chart
         width={'500px'}
         height={'300px'}
@@ -36,7 +35,6 @@ const ChartComponent = () => {
         }}
       />
       
-      <h2>Line Chart: Students Enrolled</h2>
       <Chart
         width={'500px'}
         height={'300px'}
